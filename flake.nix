@@ -98,7 +98,6 @@
             go
             golangci-lint
             cmake
-            nodejs_24
           ];
         };
         packages = rec {
