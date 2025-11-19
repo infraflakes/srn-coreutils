@@ -24,19 +24,19 @@ If you want to quickly try `serein` without installing it permanently:
 
     **Stable binary release:**
     ```bash
-    nix run github:nixuris/serein-cli#stable -- [args]
+    nix run github:infraflakes/srn-coreutils#stable -- [args]
     ```
     **Latest development build:**
     ```bash
-    nix run github:nixuris/serein-cli#test -- [args]
+    nix run github:infraflakes/srn-coreutils#test -- [args]
     ```
-    (Replace `[args]` with any `serein` command and its arguments, e.g., `nix run github:nixuris/serein-cli -- music convert mp3 /path/to/dir`)
+    (Replace `[args]` with any `serein` command and its arguments, e.g., `nix run github:nixuris/srn-coreutils -- music convert mp3 /path/to/dir`)
 
 ### For NixOS/Home Manager Configurations
 
-If you manage your system or user environment with NixOS or Home Manager flakes, you can add `serein-cli` as an input to your configuration:
+If you manage your system or user environment with NixOS or Home Manager flakes, you can add `srn-coreutils` as an input to your configuration:
 
-1.  **Add `serein-cli` as an input in your `flake.nix`:**
+1.  **Add `srn-coreutils` as an input in your `flake.nix`:**
 
     ```nix
     {
@@ -47,12 +47,12 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
         home-manager.url = "github:nix-community/home-manager";
         home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-        # Add serein-cli flake as an input
-        serein-cli.url = "github:nixuris/serein-cli";
-        serein-cli.inputs.nixpkgs.follows = "nixpkgs"; # Ensure consistent nixpkgs
+        # Add srn-coreutils flake as an input
+        srn-coreutils.url = "github:nixuris/srn-coreutils";
+        srn-coreutils.inputs.nixpkgs.follows = "nixpkgs"; # Ensure consistent nixpkgs
       };
 
-      outputs = { self, nixpkgs, home-manager, serein-cli, ... } @ inputs: {
+      outputs = { self, nixpkgs, home-manager, srn-coreutils, ... } @ inputs: {
         # ... your existing outputs
       };
     }
@@ -68,9 +68,9 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
 
     {
       environment.systemPackages = with pkgs; [
-        # Reference serein from the serein-cli flake input
-        inputs.serein-cli.packages.${pkgs.system}.test # bleeding edge
-        inputs.serein-cli.packages.${pkgs.system}.stable # follow release
+        # Reference serein from the srn-coreutils flake input
+        inputs.srn-coreutils.packages.${pkgs.system}.test # bleeding edge
+        inputs.srn-coreutils.packages.${pkgs.system}.stable # follow release
       ];
 
       # ... other system configurations
@@ -85,9 +85,9 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
 
     {
       home.packages = [
-        # Reference serein from the serein-cli flake input
-        inputs.serein-cli.packages.${pkgs.system}.test # bleeding edge
-        inputs.serein-cli.packages.${pkgs.system}.default # follow release
+        # Reference serein from the srn-coreutils flake input
+        inputs.srn-coreutils.packages.${pkgs.system}.test # bleeding edge
+        inputs.srn-coreutils.packages.${pkgs.system}.default # follow release
       ];
 
       # ... other Home Manager options
@@ -99,7 +99,7 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
 For users not using Nix, `serein` can be downloaded as a single executable binary.
 
 1.  **Download the latest release:**
-    Visit the [GitHub Releases page](https://github.com/nixuris/serein-cli/releases) and download the wanted binary.
+    Visit the [GitHub Releases page](https://github.com/nixuris/srn-coreutils/releases) and download the wanted binary.
 
 2.  **Make the binary executable:**
     ```bash
@@ -117,8 +117,8 @@ If you have a Go environment set up, you can build from source.
 
 1.  **Clone the repo:**
     ```bash
-    git clone https://github.com/nixuris/serein-cli
-    cd serein-cli
+    git clone https://github.com/nixuris/srn-coreutils
+    cd srn-coreutils
     ```
 
 2.  **Build the binary:**
@@ -138,7 +138,3 @@ Serein acts as a wrapper for several external tools. Using which ultimately depe
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
-
-## License
-
-This project is licensed under the GPL-3.0 License - see the LICENSE file for details.
