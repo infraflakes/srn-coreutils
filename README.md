@@ -1,4 +1,4 @@
-# Serein CLI
+# Serein Coreutils
 
 Serein is an opinionated CLI wrapper that replaces cryptic flags with self-explanatory, English-like sub-commands.
 
