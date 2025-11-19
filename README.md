@@ -30,7 +30,7 @@ If you want to quickly try `serein` without installing it permanently:
     ```bash
     nix run github:infraflakes/srn-coreutils#test -- [args]
     ```
-    (Replace `[args]` with any `serein` command and its arguments, e.g., `nix run github:nixuris/srn-coreutils -- music convert mp3 /path/to/dir`)
+    (Replace `[args]` with any `serein` command and its arguments, e.g., `nix run github:infraflakes/srn-coreutils -- music convert mp3 /path/to/dir`)
 
 ### For NixOS/Home Manager Configurations
 
@@ -48,7 +48,7 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
         home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
         # Add srn-coreutils flake as an input
-        srn-coreutils.url = "github:nixuris/srn-coreutils";
+        srn-coreutils.url = "github:infraflakes/srn-coreutils";
         srn-coreutils.inputs.nixpkgs.follows = "nixpkgs"; # Ensure consistent nixpkgs
       };
 
@@ -99,7 +99,7 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
 For users not using Nix, `serein` can be downloaded as a single executable binary.
 
 1.  **Download the latest release:**
-    Visit the [GitHub Releases page](https://github.com/nixuris/srn-coreutils/releases) and download the wanted binary.
+    Visit the [GitHub Releases page](https://github.com/infraflakes/srn-coreutils/releases) and download the wanted binary.
 
 2.  **Make the binary executable:**
     ```bash
@@ -117,7 +117,7 @@ If you have a Go environment set up, you can build from source.
 
 1.  **Clone the repo:**
     ```bash
-    git clone https://github.com/nixuris/srn-coreutils
+    git clone https://github.com/infraflakes/srn-coreutils
     cd srn-coreutils
     ```
 
