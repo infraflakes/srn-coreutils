@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     srn-coreutils-test = {
-      url = "github:nixuris/srn-coreutils?ref=main";
+      url = "github:infraflakes/srn-coreutils?ref=main";
     };
   };
 
@@ -23,7 +23,7 @@
         # Version and download info for stable release
         stableVersion = "3.0.0"; # Change this
         stableDownload = {
-          url = "https://github.com/nixuris/srn-coreutils/releases/download/v${stableVersion}/serein_${stableVersion}_linux_amd64.tar.gz";
+          url = "https://github.com/infraflakes/srn-coreutils/releases/download/v${stableVersion}/serein_${stableVersion}_linux_amd64.tar.gz";
           sha256 = "vKPHNDIXz1YC5hbLU88i/vkRHKAO019SyKv9vTnw53w=";
         };
 

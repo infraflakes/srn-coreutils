@@ -17,5 +17,5 @@ checksum:
 
 release:
   github:
-    owner: nixuris
-    name: serein-cli
+    owner: infraflakes
+    name: srn-coreutils
