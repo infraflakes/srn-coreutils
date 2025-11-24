@@ -20,23 +20,25 @@ Serein is an opinionated CLI wrapper that replaces cryptic flags with self-expla
 If you want to quickly try `serein` without installing it permanently:
 
 1.  **Ensure Nix is installed** on your system with flake support enabled.
-2.  **Run Serein directly:**
+2.  **Run Serein directly from GitHub:**
+    You can run the stable build:
+    ```bash
+    nix run github:infraflakes/srn-coreutils -- [args]
+    ```
+    Or the latest development build:
+    ```bash
+    nix run github:infraflakes/srn-coreutils/dev -- [args]
+    ```
 
-    **Stable binary release:**
-    ```bash
-    nix run github:infraflakes/srn-coreutils#stable -- [args]
-    ```
-    **Latest development build:**
-    ```bash
-    nix run github:infraflakes/srn-coreutils#test -- [args]
-    ```
     (Replace `[args]` with any `serein` command and its arguments, e.g., `nix run github:infraflakes/srn-coreutils -- music convert mp3 /path/to/dir`)
 
 ### For NixOS/Home Manager Configurations
 
-If you manage your system or user environment with NixOS or Home Manager flakes, you can add `srn-coreutils` as an input to your configuration:
+If you manage your system or user environment with NixOS or Home Manager flakes, you can add `srn-coreutils` as an input to your configuration.
 
 1.  **Add `srn-coreutils` as an input in your `flake.nix`:**
+
+    You can choose which branch to follow. For the stable version, use the `main` branch. For the latest development version, use the `dev` branch.
 
     ```nix
     {
@@ -47,9 +49,13 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
         home-manager.url = "github:nix-community/home-manager";
         home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-        # Add srn-coreutils flake as an input
-        srn-coreutils.url = "github:infraflakes/srn-coreutils";
-        srn-coreutils.inputs.nixpkgs.follows = "nixpkgs"; # Ensure consistent nixpkgs
+        # Add srn-coreutils flake input, tracking the main (stable) branch
+        srn-coreutils = {
+          url = "github:infraflakes/srn-coreutils";
+          # Or, to track the dev branch:
+          # url = "github:infraflakes/srn-coreutils/dev";
+          inputs.nixpkgs.follows = "nixpkgs";
+        };
       };
 
       outputs = { self, nixpkgs, home-manager, srn-coreutils, ... } @ inputs: {
@@ -60,6 +66,8 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
 
 2.  **Install `serein` in your NixOS or Home Manager configuration:**
 
+    The flake provides a `default` package.
+
     **Option A: Install System-Wide (NixOS Configuration)**
 
     ```nix
@@ -69,8 +77,8 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
     {
       environment.systemPackages = with pkgs; [
         # Reference serein from the srn-coreutils flake input
-        inputs.srn-coreutils.packages.${pkgs.system}.test # bleeding edge
-        inputs.srn-coreutils.packages.${pkgs.system}.stable # follow release
+        inputs.srn-coreutils.packages.${pkgs.stdenv.hostPlatform.system}.default
+
       ];
 
       # ... other system configurations
@@ -86,8 +94,8 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
     {
       home.packages = [
         # Reference serein from the srn-coreutils flake input
-        inputs.srn-coreutils.packages.${pkgs.system}.test # bleeding edge
-        inputs.srn-coreutils.packages.${pkgs.system}.default # follow release
+        inputs.srn-coreutils.packages.${pkgs.stdenv.hostPlatform.system}.default
+
       ];
 
       # ... other Home Manager options
@@ -103,12 +111,12 @@ For users not using Nix, `serein` can be downloaded as a single executable binar
 
 2.  **Make the binary executable:**
     ```bash
-    chmod +x ./serein
+    chmod +x serein
     ```
 
 3.  **Move the binary to your PATH (optional but recommended):**
     ```bash
-    sudo mv ./serein /usr/local/bin/
+    sudo mv serein /usr/local/bin/
     ```
 
 ### Manual Installation (from source)
