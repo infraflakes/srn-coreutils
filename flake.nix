@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     srn-coreutils-test = {
-      url = "github:infraflakes/srn-coreutils?ref=main";
+      url = "github:infraflakes/srn-coreutils/main";
     };
   };
 
