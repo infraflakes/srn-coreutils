@@ -4,16 +4,12 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    srn-coreutils-test = {
-      url = "github:infraflakes/srn-coreutils/main";
-    };
   };
 
   outputs = {
     self,
     nixpkgs,
     flake-utils,
-    srn-coreutils-test,
     ...
   }:
     flake-utils.lib.eachDefaultSystem (
