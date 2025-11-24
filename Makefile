@@ -1,4 +1,4 @@
-# Makefile for serein-cli
+# Makefile for srn-coreutils
 
 # Use git describe to get a version string.
 # Example: v1.0.0-3-g1234567

@@ -1,4 +1,4 @@
-# Dockerfile for serein-cli
+# Dockerfile for srn-coreutils
 
 # ---- Build Stage ----
 # This stage compiles the Go binary.
@@ -10,7 +10,7 @@ RUN apk add --no-cache git
 WORKDIR /app
 
 # Copy go.mod and go.sum to download dependencies first
-COPY go.mod go.sum ./ 
+COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy the rest of the source code

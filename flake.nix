@@ -4,34 +4,34 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    serein-cli-test = {
-      url = "github:nixuris/serein-cli?ref=main";
+    srn-coreutils-test = {
+      url = "github:nixuris/srn-coreutils?ref=main";
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      flake-utils,
-      serein-cli-test,
-      ...
-    }:
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+    srn-coreutils-test,
+    ...
+  }:
     flake-utils.lib.eachDefaultSystem (
-      system:
-      let
+      system: let
         pkgs = nixpkgs.legacyPackages.${system};
 
         # Version and download info for stable release
         stableVersion = "3.0.0"; # Change this
         stableDownload = {
-          url = "https://github.com/nixuris/serein-cli/releases/download/v${stableVersion}/serein_${stableVersion}_linux_amd64.tar.gz";
+          url = "https://github.com/nixuris/srn-coreutils/releases/download/v${stableVersion}/serein_${stableVersion}_linux_amd64.tar.gz";
           sha256 = "vKPHNDIXz1YC5hbLU88i/vkRHKAO019SyKv9vTnw53w=";
         };
 
         # Source build for test variant
-        buildSereinFromSource =
-          { src, version }:
+        buildSereinFromSource = {
+          src,
+          version,
+        }:
           pkgs.buildGoModule {
             pname = "serein";
             inherit version src;
@@ -41,7 +41,7 @@
               "-w"
               "-X main.version=${version}"
             ];
-            nativeBuildInputs = [ pkgs.installShellFiles ];
+            nativeBuildInputs = [pkgs.installShellFiles];
             postFixup = ''
               installShellCompletion --fish ${src}/completions/serein.fish
               installShellCompletion --zsh ${src}/completions/serein.zsh
@@ -77,22 +77,19 @@
           '';
           fixupPhase = ''
             patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $out/bin/serein
-            wrapProgram $out/bin/serein --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath [ pkgs.glibc ]}"
+            wrapProgram $out/bin/serein --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath [pkgs.glibc]}"
           '';
         };
 
         # Clean source with explicit inclusion of .version
         cleanedSource = pkgs.lib.cleanSourceWith {
           src = ./.;
-          filter =
-            path: type:
-            let
-              baseName = baseNameOf path;
-            in
+          filter = path: type: let
+            baseName = baseNameOf path;
+          in
             baseName == ".version" || pkgs.lib.cleanSourceFilter path type;
         };
-      in
-      {
+      in {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             go
@@ -104,12 +101,13 @@
           # Test variant: Build from local source
           test = buildSereinFromSource {
             src = cleanedSource;
-            version =
-              let
-                versionFile = "${cleanedSource}/.version";
-              in
+            version = let
+              versionFile = "${cleanedSource}/.version";
+            in
               pkgs.lib.escapeShellArg (
-                if builtins.pathExists versionFile then builtins.readFile versionFile else self.shortRev or "dev"
+                if builtins.pathExists versionFile
+                then builtins.readFile versionFile
+                else self.shortRev or "dev"
               );
           };
 
@@ -121,9 +119,9 @@
         };
 
         apps = rec {
-          default = flake-utils.lib.mkApp { drv = self.packages.${system}.default; };
-          test = flake-utils.lib.mkApp { drv = self.packages.${system}.test; };
-          stable = flake-utils.lib.mkApp { drv = self.packages.${system}.stable; };
+          default = flake-utils.lib.mkApp {drv = self.packages.${system}.default;};
+          test = flake-utils.lib.mkApp {drv = self.packages.${system}.test;};
+          stable = flake-utils.lib.mkApp {drv = self.packages.${system}.stable;};
         };
       }
     );

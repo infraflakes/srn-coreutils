@@ -79,7 +79,7 @@ These commands manage the user-level configuration for Home Manager.
     ```
 *   **Fetch a package and check its hash:**
     ```bash
-    serein nix hash https://github.com/nixuris/serein-cli/releases/download/v3.0.0/serein_3.0.0_linux_amd64.tar.gz
+    serein nix hash https://github.com/nixuris/srn-coreutils/releases/download/v3.0.0/serein_3.0.0_linux_amd64.tar.gz
     ```
 
 *   **Build the NixOS configuration from `/etc/nixos`:**
