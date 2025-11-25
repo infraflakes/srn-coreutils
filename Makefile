@@ -13,7 +13,7 @@ GO_CLEAN=$(GO_CMD) clean
 GO_INSTALL=$(GO_CMD) install
 
 # Binary name
-BINARY_NAME=serein
+BINARY_NAME=srn
 NIX_BUILD=result
 
 # Build flags

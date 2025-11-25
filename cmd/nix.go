@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"serein/internal/nix"
+	"srn/internal/nix"
 )
 
 func init() {

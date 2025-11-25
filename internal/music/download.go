@@ -2,7 +2,7 @@ package music
 
 import (
 	"github.com/spf13/cobra"
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 var YTMusicDownloadCmd = shared.NewCommand(

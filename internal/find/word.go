@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 var WordCmd = shared.NewCommand(

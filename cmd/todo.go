@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 
-	"serein/internal/todo"
+	"srn/internal/todo"
 )
 
 var todoCmd = &cobra.Command{

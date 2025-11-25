@@ -1,10 +1,9 @@
-# Serein CLI Documentation
+# Serein Coreutils CLI Documentation
 
-This document provides detailed usage information for the `serein` CLI tool.
+This document provides detailed usage information for the `srn` CLI tool.
 
 ## Table of Contents
 
-*   [Container Management](box.md)
 *   [Music Utilities](music.md)
 *   [Nix System Management](nix.md)
 *   [Archive Operations](archive.md)

@@ -3,7 +3,7 @@ package archive
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 func init() {

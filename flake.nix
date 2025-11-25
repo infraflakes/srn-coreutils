@@ -16,12 +16,12 @@
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        buildSerein = {
+        buildSrn = {
           src,
           version,
         }:
           pkgs.buildGoModule {
-            pname = "serein";
+            pname = "srn";
             inherit version src;
             vendorHash = "sha256-+gNaABMs7XZbOFlvLQA5KtnZrBHDWgBtH6W29KMeBU0="; # Update if source changes
             ldflags = [
@@ -31,9 +31,9 @@
             ];
             nativeBuildInputs = [pkgs.installShellFiles];
             postFixup = ''
-              installShellCompletion --fish ${src}/completions/serein.fish
-              installShellCompletion --zsh ${src}/completions/serein.zsh
-              installShellCompletion --bash ${src}/completions/serein.bash
+              installShellCompletion --fish ${src}/completions/srn.fish
+              installShellCompletion --zsh ${src}/completions/srn.zsh
+              installShellCompletion --bash ${src}/completions/srn.bash
             '';
           };
 
@@ -53,7 +53,7 @@
           ];
         };
 
-        packages.default = buildSerein {
+        packages.default = buildSrn {
           src = cleanedSource;
           version = let
             versionFile = "${cleanedSource}/.version";

@@ -3,7 +3,7 @@ package archive
 import (
 	"os"
 	"path/filepath"
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 func ExpandTargets(targets []string) []string {

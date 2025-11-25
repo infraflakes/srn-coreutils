@@ -20,13 +20,13 @@ COPY . .
 ARG VERSION=$(git describe --tags --always --dirty --first-parent 2>/dev/null || echo "dev")
 
 # Build the binary with version information
-RUN go build -ldflags="-s -w -X main.version=${VERSION}" -o /serein .
+RUN go build -ldflags="-s -w -X main.version=${VERSION}" -o /srn .
 
 # ---- Final Stage ----
 # This stage creates the final, minimal image.
 FROM alpine:latest
 
-# Install runtime dependencies for serein commands
+# Install runtime dependencies for srn commands
 # yt-dlp requires python and pip
 RUN apk add --no-cache \
     bash \
@@ -41,10 +41,10 @@ RUN apk add --no-cache \
 RUN pip3 install --no-cache-dir yt-dlp
 
 # Copy the compiled binary from the build stage
-COPY --from=build /serein /usr/local/bin/serein
+COPY --from=build /srn /usr/local/bin/srn
 
-# Set the entrypoint to the serein binary
-ENTRYPOINT ["serein"]
+# Set the entrypoint to the srn binary
+ENTRYPOINT ["srn"]
 
 # Default command to show help
 CMD ["--help"]

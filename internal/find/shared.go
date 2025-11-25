@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 func DeletePath(path string, isDir bool) {
