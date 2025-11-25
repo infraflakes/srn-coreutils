@@ -41,46 +41,52 @@ const (
 	DeleteConfirmInput
 )
 
-// Model represents the application state
+// Model represents the entire state of the todo application.
+// It's the central data structure that gets passed around and updated
+// by the Bubble Tea runtime.
 type Model struct {
-	// Core state
-	Tasks          []Task
-	Contexts       []string
-	CurrentContext string
-	SelectedIndex  int
-	NextID         int
+	// --- Core State ---
+	// These fields represent the fundamental data of the application.
+	Tasks          []Task   // A slice holding all tasks across all contexts. This is the single source of truth.
+	Contexts       []string // A list of all available contexts (e.g., "Work", "Personal").
+	CurrentContext string   // The context currently being viewed by the user.
+	SelectedIndex  int      // The index of the currently selected task in the *filtered* view.
+	NextID         int      // A counter to ensure all new tasks get a unique ID.
 
-	// View state
-	ViewMode        ViewMode
-	InputMode       InputMode
-	PrevContext     string
-	PrevIndex       int
-	MovingMode      bool
-	MovingTaskIndex int
+	// --- View State ---
+	// These fields control what is currently being displayed on the screen.
+	ViewMode  ViewMode // Determines which major view is active (e.g., Normal, Kanban, Input).
+	InputMode InputMode // If ViewMode is InputView, this specifies the type of input (e.g., adding vs. editing a task).
 
-	// Input handling
-	TextInput       textinput.Model
+	// State for task movement.
+	MovingMode   bool // Flag to indicate if the user has initiated a task move.
+	MovingTaskID int  // The unique ID of the task being moved. Using the ID is crucial as the task's index can change.
+
+	// --- Input Handling ---
+	// These fields manage the state of various user input components.
+	TextInput       textinput.Model // A text input component for adding/editing tasks, contexts, etc.
 	DateInputs      []textinput.Model
 	DateInputIndex  int
 	RemoveTagIndex  int
 	RemoveTagChecks []bool
-	InputPrompt     string
+	InputPrompt     string // The prompt to display when in InputView (e.g., "Add new task:").
 
-	// UI state
+	// --- UI State ---
+	// General UI-related state.
 	WindowWidth  int
 	WindowHeight int
-	ErrorMessage string
+	ErrorMessage string // A message to display to the user when an error occurs.
 
-	// History for undo
-	History    [][]Task
-	MaxHistory int
+	// --- History for Undo ---
+	History    [][]Task // A stack of previous task states to allow for undo operations.
+	MaxHistory int      // The maximum number of undo states to store.
 
-	// Keybindings
-	KeyMap KeyMap
-	Help   help.Model
+	// --- Keybindings & Help ---
+	KeyMap KeyMap     // Holds the application's key bindings.
+	Help   help.Model // The help bubble component.
 
-	// Config
-	ConfigPath string
+	// --- Configuration ---
+	ConfigPath string // The file path where the application's state is saved.
 }
 
 // KeyMap defines key bindings

@@ -65,8 +65,12 @@ var (
 			Margin(1)
 )
 
-// View implements tea.Model
+// View is the main rendering function for the application, also a core part of the
+// Bubble Tea architecture. It returns a string that represents the UI to be drawn
+// to the terminal. The runtime calls this whenever the model is updated.
 func (m Model) View() string {
+	// Delegate to a specific rendering function based on the current ViewMode.
+	// This acts as a router for the UI, ensuring the correct screen is displayed.
 	switch m.ViewMode {
 	case InputView:
 		return m.RenderInputView()
@@ -83,14 +87,15 @@ func (m Model) View() string {
 	}
 }
 
-// RenderNormalView renders the main task list view
+// RenderNormalView renders the main task list screen.
 func (m Model) RenderNormalView() string {
 	var content strings.Builder
 
-	// Header
+	// 1. Render the header, showing the current context.
 	contextText := fmt.Sprintf("Context: %s", m.CurrentContext)
 	content.WriteString(titleStyle.Render(contextText) + "\n\n")
-	// Tasks
+
+	// 2. Get the tasks for the current context and render them.
 	tasks := m.GetFilteredTasks()
 	if len(tasks) == 0 {
 		if len(m.Contexts) == 0 {
@@ -99,33 +104,40 @@ func (m Model) RenderNormalView() string {
 			content.WriteString("No tasks in this context. Press 'a' to add one.\n")
 		}
 	} else {
+		// Iterate over the filtered tasks and render each one.
 		for i, task := range tasks {
-			taskLine := m.RenderTask(task, i == m.SelectedIndex, i == m.MovingTaskIndex && m.MovingMode)
+			// The `moving` boolean is true only if moving mode is active AND the current task's ID
+			// matches the ID of the task we started moving. This ensures the correct task is
+			// highlighted even after the list order changes.
+			taskLine := m.RenderTask(task, i == m.SelectedIndex, m.MovingMode && task.ID == m.MovingTaskID)
 			content.WriteString(taskLine + "\n")
 		}
 	}
 
-	// Error message
+	// 3. Display an error message if one exists.
 	if m.ErrorMessage != "" {
 		content.WriteString("\n" + errorStyle.Render(m.ErrorMessage) + "\n")
 	}
 
-	// Help
+	// 4. Render the help view, which shows available keybindings.
 	m.Help.ShowAll = true
 	content.WriteString("\n" + helpStyle.Render(m.Help.View(m.KeyMap)))
 
+	// Apply base styling to the entire view and return it.
 	return baseStyle.Render(content.String())
 }
 
-// RenderTask renders a single task
+// RenderTask renders a single line representing a task.
+// It applies different styling based on whether the task is completed,
+// selected by the cursor, or currently being moved.
 func (m Model) RenderTask(task Task, selected, moving bool) string {
-	// Checkbox
+	// Checkbox indicates completion status.
 	checkbox := "[ ]"
 	if task.Checked {
 		checkbox = "[✓]"
 	}
 
-	// Priority indicator
+	// Priority is shown with exclamation marks.
 	priority := ""
 	switch task.Priority {
 	case "high":
@@ -136,34 +148,34 @@ func (m Model) RenderTask(task Task, selected, moving bool) string {
 		priority = lowPriorityStyle.Render("! ")
 	}
 
-	// Task text
 	taskText := task.Task
 
-	// Tags
+	// Tags are appended to the task text.
 	tags := ""
 	if len(task.Tags) > 0 {
 		tags = " > " + strings.Join(task.Tags, ", ")
 	}
 
-	// Due date
+	// Due date is shown at the end.
 	dueDate := ""
 	if task.DueDate != "" {
 		dueDate = fmt.Sprintf(" [Due: %s]", task.DueDate)
 	}
 
-	// Combine text
 	text := fmt.Sprintf("%s %s%s%s", checkbox, taskText, tags, dueDate)
 
-	// Apply styles
+	// Apply styles based on the task's state.
 	style := taskStyle
 	if task.Checked {
 		style = completedTaskStyle
 	}
 
+	// The 'selected' style has precedence over the base or completed style.
 	if selected {
 		style = style.Background(lipgloss.Color("#313244"))
 	}
 
+	// The 'moving' style is applied on top of other styles.
 	if moving {
 		style = style.Bold(true)
 	}
@@ -230,9 +242,7 @@ func (m Model) RenderKanbanView() string {
 
 	// Calculate column width
 	colWidth := (m.WindowWidth - 4) / len(m.Contexts)
-	if colWidth < 20 {
-		colWidth = 20
-	}
+	colWidth = max(colWidth, 20)
 
 	// Render columns
 	var columns []string
