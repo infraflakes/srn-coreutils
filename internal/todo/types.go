@@ -61,6 +61,8 @@ type Model struct {
 	// State for task movement.
 	MovingMode   bool // Flag to indicate if the user has initiated a task move.
 	MovingTaskID int  // The unique ID of the task being moved. Using the ID is crucial as the task's index can change.
+	KanbanScrollY int  // The vertical scroll position of the Kanban view.
+	KanbanScrollX int  // The horizontal scroll position of the Kanban view.
 
 	// --- Input Handling ---
 	// These fields manage the state of various user input components.
@@ -82,11 +84,12 @@ type Model struct {
 	MaxHistory int      // The maximum number of undo states to store.
 
 	// --- Keybindings & Help ---
-	KeyMap KeyMap     // Holds the application's key bindings.
-	Help   help.Model // The help bubble component.
+	KeyMap      KeyMap     // Holds the application's key bindings.
+	Help        help.Model // The help bubble component.
+	HelpVisible bool       // To toggle the full help view.
 
 	// --- Configuration ---
-	ConfigPath string // The file path where the application's state is saved.
+	ConfigFilePath string // The file path where the application's state is saved.
 }
 
 // KeyMap defines key bindings
@@ -111,6 +114,7 @@ type KeyMap struct {
 	StatsView      key.Binding
 	Undo           key.Binding
 	Move           key.Binding
+	Help           key.Binding
 	Quit           key.Binding
 	Back           key.Binding
 	Enter          key.Binding
@@ -200,6 +204,10 @@ func DefaultKeyMap() KeyMap {
 			key.WithKeys("m"),
 			key.WithHelp("m", "move"),
 		),
+		Help: key.NewBinding(
+			key.WithKeys("?"),
+			key.WithHelp("?", "help"),
+		),
 		Quit: key.NewBinding(
 			key.WithKeys("q", "ctrl+c"),
 			key.WithHelp("q", "quit"),
@@ -231,6 +239,6 @@ func (k KeyMap) FullHelp() [][]key.Binding {
 		{k.AddContext, k.RenameContext, k.DeleteContext},
 		{k.TogglePriority, k.AddTag, k.RemoveTag, k.SetDueDate, k.ClearDueDate},
 		{k.KanbanView, k.StatsView},
-		{k.Undo, k.Back, k.Quit},
+		{k.Undo, k.Help, k.Back, k.Quit},
 	}
 }

@@ -19,10 +19,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.WindowWidth = msg.Width
 		m.WindowHeight = msg.Height
 		m.Help.Width = msg.Width
+		m.TextInput.Width = msg.Width - 20
 		return m, tea.ClearScreen
 
 	// Handle key press events.
 	case tea.KeyMsg:
+		// If the help view is visible, only handle keys that hide it.
+		if m.HelpVisible {
+			switch {
+			case key.Matches(msg, m.KeyMap.Help), key.Matches(msg, m.KeyMap.Back):
+				m.HelpVisible = false
+			}
+			return m, nil
+		}
+
 		// On any key press, we clear a previous error message, so it's not sticky.
 		m.ErrorMessage = ""
 
@@ -285,6 +295,9 @@ func (m Model) UpdateNormalView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.KeyMap.Undo):
 		m.Undo()
 
+	case key.Matches(msg, m.KeyMap.Help):
+		m.HelpVisible = true
+
 	// This is the core of the move functionality. It toggles MovingMode on/off.
 	// When entering moving mode, it records the ID of the currently selected task.
 	// This ensures that even if the visual selection changes, the application
@@ -310,6 +323,23 @@ func (m Model) UpdateKanbanView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch {
 	case key.Matches(msg, m.KeyMap.Back), key.Matches(msg, m.KeyMap.Quit), key.Matches(msg, m.KeyMap.KanbanView):
 		m.ViewMode = NormalView
+		m.KanbanScrollY = 0 // Reset scroll position when leaving
+		m.KanbanScrollX = 0
+	case key.Matches(msg, m.KeyMap.Up):
+		if m.KanbanScrollY > 0 {
+			m.KanbanScrollY--
+		}
+	case key.Matches(msg, m.KeyMap.Down):
+		m.KanbanScrollY++
+		// Note: We don't have max scroll height here, so it can scroll past the end.
+		// This is okay, as the view function will clip it.
+	case key.Matches(msg, m.KeyMap.Left):
+		if m.KanbanScrollX > 0 {
+			m.KanbanScrollX--
+		}
+	case key.Matches(msg, m.KeyMap.Right):
+		// We do a check in the view to prevent scrolling past the end.
+		m.KanbanScrollX++
 	}
 	return m, nil
 }
