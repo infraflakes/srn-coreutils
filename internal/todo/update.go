@@ -83,29 +83,35 @@ func (m Model) UpdateInputMode(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			if input != "" {
 				m.SaveStateForUndo()
 				m.AddTask(input)
+				m.SaveConfig()
 			}
 		case EditTaskInput:
 			if input != "" {
 				m.SaveStateForUndo()
 				m.EditCurrentTask(input)
+				m.SaveConfig()
 			}
 		case AddContextInput:
 			if input != "" {
 				m.AddContext(input)
+				m.SaveConfig()
 			}
 		case RenameContextInput:
 			if input != "" && input != m.CurrentContext {
 				m.RenameContext(input)
+				m.SaveConfig()
 			}
 		case AddTagInput:
 			if input != "" {
 				m.SaveStateForUndo()
 				m.AddTagToCurrentTask(input)
+				m.SaveConfig()
 			}
 		case DeleteConfirmInput:
 			if strings.ToLower(input) == "y" {
 				m.SaveStateForUndo()
 				m.DeleteContext()
+				m.SaveConfig()
 			}
 		}
 
@@ -134,6 +140,7 @@ func (m Model) UpdateDateInputMode(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		dateStr := fmt.Sprintf("%s-%s-%s", year, month, day)
 		m.SaveStateForUndo()
 		m.SetDueDateForCurrentTask(dateStr)
+		m.SaveConfig()
 		m.ViewMode = NormalView
 		return m, nil
 
@@ -162,6 +169,7 @@ func (m Model) UpdateRemoveTagMode(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.KeyMap.Enter):
 		m.SaveStateForUndo()
 		m.RemoveTagsFromCurrentTask()
+		m.SaveConfig()
 		m.ViewMode = NormalView
 		return m, nil
 
@@ -188,7 +196,6 @@ func (m Model) UpdateRemoveTagMode(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m Model) UpdateNormalView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch {
 	case key.Matches(msg, m.KeyMap.Quit):
-		m.SaveConfig()
 		return m, tea.Quit
 
 	case key.Matches(msg, m.KeyMap.Back):
@@ -224,6 +231,7 @@ func (m Model) UpdateNormalView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if len(m.GetFilteredTasks()) > 0 {
 			m.SaveStateForUndo()
 			m.ToggleCurrentTask()
+			m.SaveConfig()
 		}
 
 	case key.Matches(msg, m.KeyMap.Add):
@@ -240,6 +248,7 @@ func (m Model) UpdateNormalView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if len(m.GetFilteredTasks()) > 0 {
 			m.SaveStateForUndo()
 			m.DeleteCurrentTask()
+			m.SaveConfig()
 		}
 
 	// --- Context Manipulation ---
@@ -262,6 +271,7 @@ func (m Model) UpdateNormalView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if len(m.GetFilteredTasks()) > 0 {
 			m.SaveStateForUndo()
 			m.ToggleCurrentTaskPriority()
+			m.SaveConfig()
 		}
 
 	case key.Matches(msg, m.KeyMap.AddTag):
@@ -283,6 +293,7 @@ func (m Model) UpdateNormalView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if len(m.GetFilteredTasks()) > 0 {
 			m.SaveStateForUndo()
 			m.SetDueDateForCurrentTask("clear")
+			m.SaveConfig()
 		}
 
 	// --- View & Mode Switching ---
@@ -294,6 +305,7 @@ func (m Model) UpdateNormalView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case key.Matches(msg, m.KeyMap.Undo):
 		m.Undo()
+		m.SaveConfig()
 
 	case key.Matches(msg, m.KeyMap.Help):
 		m.HelpVisible = true
@@ -311,13 +323,13 @@ func (m Model) UpdateNormalView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			} else {
 				// "Drop" the task and save the new order to the undo history.
 				m.SaveStateForUndo()
+				m.SaveConfig()
 			}
 		}
 	}
 
 	return m, nil
 }
-
 // UpdateKanbanView handles kanban view updates
 func (m Model) UpdateKanbanView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch {
