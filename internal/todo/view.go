@@ -54,10 +54,6 @@ var (
 			Foreground(lipgloss.Color("#F38BA8")).
 			Bold(true)
 
-	// Help style
-	helpStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#6C7086"))
-
 	// Input styles
 	inputStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).

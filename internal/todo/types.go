@@ -55,12 +55,12 @@ type Model struct {
 
 	// --- View State ---
 	// These fields control what is currently being displayed on the screen.
-	ViewMode  ViewMode // Determines which major view is active (e.g., Normal, Kanban, Input).
+	ViewMode  ViewMode  // Determines which major view is active (e.g., Normal, Kanban, Input).
 	InputMode InputMode // If ViewMode is InputView, this specifies the type of input (e.g., adding vs. editing a task).
 
 	// State for task movement.
-	MovingMode   bool // Flag to indicate if the user has initiated a task move.
-	MovingTaskID int  // The unique ID of the task being moved. Using the ID is crucial as the task's index can change.
+	MovingMode    bool // Flag to indicate if the user has initiated a task move.
+	MovingTaskID  int  // The unique ID of the task being moved. Using the ID is crucial as the task's index can change.
 	KanbanScrollY int  // The vertical scroll position of the Kanban view.
 	KanbanScrollX int  // The horizontal scroll position of the Kanban view.
 

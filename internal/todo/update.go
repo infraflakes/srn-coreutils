@@ -330,6 +330,7 @@ func (m Model) UpdateNormalView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	return m, nil
 }
+
 // UpdateKanbanView handles kanban view updates
 func (m Model) UpdateKanbanView(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch {
