@@ -54,10 +54,6 @@ var (
 			Foreground(lipgloss.Color("#F38BA8")).
 			Bold(true)
 
-	// Help style
-	helpStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#6C7086"))
-
 	// Input styles
 	inputStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
@@ -65,8 +61,16 @@ var (
 			Margin(1)
 )
 
-// View implements tea.Model
+// View is the main rendering function for the application, also a core part of the
+// Bubble Tea architecture. It returns a string that represents the UI to be drawn
+// to the terminal. The runtime calls this whenever the model is updated.
 func (m Model) View() string {
+	if m.HelpVisible {
+		return m.renderFullHelpView()
+	}
+
+	// Delegate to a specific rendering function based on the current ViewMode.
+	// This acts as a router for the UI, ensuring the correct screen is displayed.
 	switch m.ViewMode {
 	case InputView:
 		return m.RenderInputView()
@@ -83,49 +87,67 @@ func (m Model) View() string {
 	}
 }
 
-// RenderNormalView renders the main task list view
-func (m Model) RenderNormalView() string {
-	var content strings.Builder
+// renderFullHelpView renders a centered, modal-like view of all keybindings.
+func (m Model) renderFullHelpView() string {
+	// Style the help box to look like a modal
+	helpBoxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#89B4FA")).
+		Padding(1, 2)
 
-	// Header
+	m.Help.ShowAll = true
+	helpContent := m.Help.View(m.KeyMap)
+	// Add a title to the help view
+	titledHelp := lipgloss.JoinVertical(lipgloss.Left,
+		titleStyle.Render("Keybindings"),
+		helpContent,
+	)
+
+	return lipgloss.Place(m.WindowWidth, m.WindowHeight, lipgloss.Center, lipgloss.Center, helpBoxStyle.Render(titledHelp))
+}
+
+// RenderNormalView renders the main task list screen.
+func (m Model) RenderNormalView() string {
+	var mainContent strings.Builder
+
+	// 1. Render the header, showing the current context.
 	contextText := fmt.Sprintf("Context: %s", m.CurrentContext)
-	content.WriteString(titleStyle.Render(contextText) + "\n\n")
-	// Tasks
+	mainContent.WriteString(titleStyle.Render(contextText) + "\n\n")
+
+	// 2. Get the tasks for the current context and render them.
 	tasks := m.GetFilteredTasks()
 	if len(tasks) == 0 {
 		if len(m.Contexts) == 0 {
-			content.WriteString("No contexts exist. Press 'n' to create one.\n")
+			mainContent.WriteString("No contexts exist. Press 'n' to create one.\n")
 		} else {
-			content.WriteString("No tasks in this context. Press 'a' to add one.\n")
+			mainContent.WriteString("No tasks in this context. Press 'a' to add one.\n")
 		}
 	} else {
 		for i, task := range tasks {
-			taskLine := m.RenderTask(task, i == m.SelectedIndex, i == m.MovingTaskIndex && m.MovingMode)
-			content.WriteString(taskLine + "\n")
+			taskLine := m.RenderTask(task, i == m.SelectedIndex, m.MovingMode && task.ID == m.MovingTaskID)
+			mainContent.WriteString(taskLine + "\n")
 		}
 	}
 
-	// Error message
+	// 3. Display an error message if one exists.
 	if m.ErrorMessage != "" {
-		content.WriteString("\n" + errorStyle.Render(m.ErrorMessage) + "\n")
+		mainContent.WriteString("\n" + errorStyle.Render(m.ErrorMessage) + "\n")
 	}
 
-	// Help
-	m.Help.ShowAll = true
-	content.WriteString("\n" + helpStyle.Render(m.Help.View(m.KeyMap)))
-
-	return baseStyle.Render(content.String())
+	return baseStyle.Render(mainContent.String())
 }
 
-// RenderTask renders a single task
+// RenderTask renders a single line representing a task.
+// It applies different styling based on whether the task is completed,
+// selected by the cursor, or currently being moved.
 func (m Model) RenderTask(task Task, selected, moving bool) string {
-	// Checkbox
+	// Checkbox indicates completion status.
 	checkbox := "[ ]"
 	if task.Checked {
 		checkbox = "[✓]"
 	}
 
-	// Priority indicator
+	// Priority is shown with exclamation marks.
 	priority := ""
 	switch task.Priority {
 	case "high":
@@ -136,34 +158,34 @@ func (m Model) RenderTask(task Task, selected, moving bool) string {
 		priority = lowPriorityStyle.Render("! ")
 	}
 
-	// Task text
 	taskText := task.Task
 
-	// Tags
+	// Tags are appended to the task text.
 	tags := ""
 	if len(task.Tags) > 0 {
 		tags = " > " + strings.Join(task.Tags, ", ")
 	}
 
-	// Due date
+	// Due date is shown at the end.
 	dueDate := ""
 	if task.DueDate != "" {
 		dueDate = fmt.Sprintf(" [Due: %s]", task.DueDate)
 	}
 
-	// Combine text
 	text := fmt.Sprintf("%s %s%s%s", checkbox, taskText, tags, dueDate)
 
-	// Apply styles
+	// Apply styles based on the task's state.
 	style := taskStyle
 	if task.Checked {
 		style = completedTaskStyle
 	}
 
+	// The 'selected' style has precedence over the base or completed style.
 	if selected {
 		style = style.Background(lipgloss.Color("#313244"))
 	}
 
+	// The 'moving' style is applied on top of other styles.
 	if moving {
 		style = style.Bold(true)
 	}
@@ -171,11 +193,12 @@ func (m Model) RenderTask(task Task, selected, moving bool) string {
 	return priority + style.Render(text)
 }
 
-// RenderInputView renders input dialogs
+// RenderInputView renders input dialogs and places them in the center of the screen.
 func (m Model) RenderInputView() string {
-	return inputStyle.Render(
+	content := inputStyle.Render(
 		fmt.Sprintf("%s\n\n%s", m.InputPrompt, m.TextInput.View()),
 	)
+	return lipgloss.Place(m.WindowWidth, m.WindowHeight, lipgloss.Center, lipgloss.Center, content)
 }
 
 // RenderDateInputView renders due date input dialog
@@ -217,68 +240,100 @@ func (m Model) RenderRemoveTagView() string {
 	return inputStyle.Render(content.String())
 }
 
-// RenderKanbanView renders the kanban board
+// RenderKanbanView renders the kanban board with horizontal and vertical scrolling.
 func (m Model) RenderKanbanView() string {
 	var content strings.Builder
-
-	content.WriteString(titleStyle.Render("Kanban View (ESC to return)") + "\n\n")
+	title := titleStyle.Render("Kanban View (←/→/↑/↓ scroll, esc to return)")
+	content.WriteString(title + "\n")
 
 	if len(m.Contexts) == 0 {
 		content.WriteString("No contexts available.\n")
 		return baseStyle.Render(content.String())
 	}
 
-	// Calculate column width
-	colWidth := (m.WindowWidth - 4) / len(m.Contexts)
-	if colWidth < 20 {
-		colWidth = 20
+	// --- Horizontal Scrolling Logic ---
+	const (
+		fixedColWidth  = 35
+		separatorWidth = 3
+	)
+
+	// Calculate how many columns can fit on screen
+	numVisibleCols := m.WindowWidth / (fixedColWidth + separatorWidth)
+	if numVisibleCols < 1 {
+		numVisibleCols = 1
 	}
 
-	// Render columns
-	var columns []string
-	for _, context := range m.Contexts {
-		var column strings.Builder
+	// Ensure scroll position is within bounds
+	if m.KanbanScrollX > len(m.Contexts)-numVisibleCols {
+		m.KanbanScrollX = max(0, len(m.Contexts)-numVisibleCols)
+	}
+	if m.KanbanScrollX < 0 {
+		m.KanbanScrollX = 0
+	}
 
-		// Column header
+	// Get the slice of contexts that are currently visible
+	startCol := m.KanbanScrollX
+	endCol := min(startCol+numVisibleCols, len(m.Contexts))
+	visibleContexts := m.Contexts[startCol:endCol]
+
+	// Style for wrapping text within a column.
+	columnStyle := lipgloss.NewStyle().Width(fixedColWidth).Padding(0, 1)
+	taskTextStyle := lipgloss.NewStyle().Width(fixedColWidth - 2)
+
+	// Render each visible context as a column.
+	var columns []string
+	for _, context := range visibleContexts {
+		var column strings.Builder
 		header := contextStyle.Render(context)
 		column.WriteString(header + "\n")
-		column.WriteString(strings.Repeat("─", colWidth) + "\n")
+		column.WriteString(strings.Repeat("─", fixedColWidth) + "\n")
 
-		// Tasks in this context
 		tasks := m.GetTasksForContext(context)
 		for _, task := range tasks {
-			taskText := task.Task
-			if len(taskText) > colWidth-4 {
-				taskText = taskText[:colWidth-7] + "..."
-			}
-
-			tags := ""
-			if len(task.Tags) > 0 {
-				tags = " > " + strings.Join(task.Tags, ", ")
-			}
-
-			dueDate := ""
-			if task.DueDate != "" {
-				dueDate = fmt.Sprintf(" [Due: %s]", task.DueDate)
-			}
-
+			var taskLine strings.Builder
 			if task.Checked {
-				column.WriteString(completedTaskStyle.Render(fmt.Sprintf("✓ %s%s%s", taskText, tags, dueDate)) + "\n")
+				taskLine.WriteString("✓ ")
 			} else {
-				column.WriteString(taskStyle.Render(fmt.Sprintf("• %s%s%s", taskText, tags, dueDate)) + "\n")
+				taskLine.WriteString("• ")
 			}
+			fullTaskText := task.Task
+			if len(task.Tags) > 0 {
+				fullTaskText += " > " + strings.Join(task.Tags, ", ")
+			}
+			if task.DueDate != "" {
+				fullTaskText += fmt.Sprintf(" [Due: %s]", task.DueDate)
+			}
+			wrappedText := taskTextStyle.Render(fullTaskText)
+			if task.Checked {
+				taskLine.WriteString(completedTaskStyle.Render(wrappedText))
+			} else {
+				taskLine.WriteString(wrappedText)
+			}
+			column.WriteString(taskLine.String() + "\n")
 		}
-
-		columns = append(columns, column.String())
+		columns = append(columns, columnStyle.Render(column.String()))
 	}
 
-	// Combine columns side by side (simplified - in real implementation you'd use lipgloss.JoinHorizontal)
-	for i, col := range columns {
-		if i > 0 {
-			content.WriteString(" | ")
-		}
-		content.WriteString(col)
+	// Join columns horizontally.
+	board := lipgloss.JoinHorizontal(lipgloss.Top, columns...)
+	boardLines := strings.Split(board, "\n")
+
+	// --- Vertical Scrolling Logic ---
+	top := m.KanbanScrollY
+	bottom := top + m.WindowHeight - lipgloss.Height(title) - 1
+	if top < 0 {
+		top = 0
 	}
+	if bottom > len(boardLines) {
+		bottom = len(boardLines)
+	}
+	if top > bottom {
+		top = max(0, bottom-m.WindowHeight)
+		m.KanbanScrollY = top
+	}
+
+	visibleLines := boardLines[top:bottom]
+	content.WriteString(strings.Join(visibleLines, "\n"))
 
 	return baseStyle.Render(content.String())
 }

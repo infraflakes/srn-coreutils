@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"serein/internal/music"
+	"srn/internal/music"
 )
 
 var musicCmd = &cobra.Command{

@@ -1,7 +1,7 @@
 package git
 
 import (
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 func runGitCommand(args ...string) {

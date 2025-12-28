@@ -5,13 +5,13 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "serein",
-	Short: "Serein is an opinionated CLI tool.",
-	Long:  `Serein is an opinionated CLI tool that provides aliases for multiple utilities.`,
+	Use:   "srn",
+	Short: "Serein Coreutils is an opinionated CLI tool.",
+	Long:  `Serein Coreutils is an opinionated CLI tool that provides aliases for multiple utilities.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Root command does nothing by itself
 	},

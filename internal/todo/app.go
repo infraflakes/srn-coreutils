@@ -10,14 +10,20 @@ import (
 )
 
 // Initialize creates a new model
-func Initialize() Model {
-	homeDir, _ := os.UserHomeDir()
-	configPath := filepath.Join(homeDir, ".config", "tuido")
+func Initialize(configFilePath string) Model {
+	var finalPath string
+	if configFilePath != "" {
+		finalPath, _ = filepath.Abs(configFilePath)
+	} else {
+		homeDir, _ := os.UserHomeDir()
+		// New default path
+		finalPath = filepath.Join(homeDir, ".cache", "srn-todo", "note.json")
+	}
 
 	ti := textinput.New()
 	ti.Focus()
 	ti.CharLimit = 200
-	ti.Width = 50
+	ti.Width = 70
 
 	dateInputs := make([]textinput.Model, 3)
 	for i := range dateInputs {
@@ -28,13 +34,13 @@ func Initialize() Model {
 	}
 
 	m := Model{
-		TextInput:  ti,
-		DateInputs: dateInputs,
-		KeyMap:     DefaultKeyMap(),
-		Help:       help.New(),
-		ConfigPath: configPath,
-		MaxHistory: 50,
-		ViewMode:   NormalView,
+		TextInput:      ti,
+		DateInputs:     dateInputs,
+		KeyMap:         DefaultKeyMap(),
+		Help:           help.New(),
+		ConfigFilePath: finalPath, // Changed from ConfigPath
+		MaxHistory:     50,
+		ViewMode:       NormalView,
 	}
 
 	m.LoadConfig()

@@ -7,15 +7,20 @@ import (
 	"github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 
-	"serein/internal/todo"
+	"srn/internal/todo"
 )
 
 var todoCmd = &cobra.Command{
-	Use:   "todo",
+	Use:   "todo [path/to/note.json]",
 	Short: "Manage your todo list",
 	Long:  `A terminal-based todo list manager with contexts, priorities, and more.`,
+	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		p := tea.NewProgram(todo.Initialize(), tea.WithAltScreen())
+		var configPath string
+		if len(args) > 0 {
+			configPath = args[0]
+		}
+		p := tea.NewProgram(todo.Initialize(configPath), tea.WithAltScreen())
 
 		if _, err := p.Run(); err != nil {
 			fmt.Printf("Error running todo program: %v", err)

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"serein/internal/git"
+	"srn/internal/git"
 )
 
 func init() {

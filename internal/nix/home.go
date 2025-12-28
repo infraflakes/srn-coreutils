@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 func init() {

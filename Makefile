@@ -9,12 +9,11 @@ VERSION ?= $(shell git describe --tags --always --dirty --first-parent 2>/dev/nu
 GO_CMD=go
 GO_BUILD=$(GO_CMD) build
 GO_RUN=$(GO_CMD) run
-GO_FMT=$(GO_CMD) fmt
 GO_CLEAN=$(GO_CMD) clean
 GO_INSTALL=$(GO_CMD) install
 
 # Binary name
-BINARY_NAME=serein
+BINARY_NAME=srn
 NIX_BUILD=result
 
 # Build flags
@@ -33,7 +32,10 @@ run:
 
 fmt:
 	@echo "Formatting code..."
-	$(GO_FMT) ./...
+	$(GO_CMD) fmt ./...
+
+lint:
+	golangci-lint run ./...
 
 clean:
 	@echo "Cleaning..."

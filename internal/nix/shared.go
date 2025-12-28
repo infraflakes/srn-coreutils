@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 func runNixCommand(command string, args ...string) {

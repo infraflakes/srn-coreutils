@@ -1,13 +1,13 @@
 # Todo Command
 
-`serein todo`
+`srn todo`
 
 This command launches an interactive terminal-based todo list manager.
 
 ## Usage
 
 ```bash
-serein todo
+srn todo
 ```
 
 ## Features

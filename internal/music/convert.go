@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 func init() {

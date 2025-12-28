@@ -1,10 +1,9 @@
 # Serein Coreutils
 
-Serein is an opinionated CLI wrapper that replaces cryptic flags with self-explanatory, English-like sub-commands.
+Serein is an opinionated CLI that rejects cryptic flags with self-explanatory, English-like sub-commands.
 
 ## Features
 
-*   **Container Management:** Easily build, delete, list, and run Podman containers, including options for interactive shells, background execution, volume mounts, and device passthrough.
 *   **Music Conversion:** Convert audio files (FLAC, Opus) to MP3 format with embedded cover art, and format M3U playlists for compatibility.
 *   **Nix System Management:** Manage NixOS system and Home Manager configurations, including building, listing, and deleting generations, and updating flakes.
 *   **Archive Operations:** Compress and extract files using 7z, with support for password protection.
@@ -17,26 +16,28 @@ Serein is an opinionated CLI wrapper that replaces cryptic flags with self-expla
 
 ### Quick Try (Run without Installation)
 
-If you want to quickly try `serein` without installing it permanently:
+If you want to quickly try it without installing it permanently:
 
 1.  **Ensure Nix is installed** on your system with flake support enabled.
-2.  **Run Serein directly:**
+2.  **Run the CLI directly from GitHub:**
+    You can run the stable build:
+    ```bash
+    nix run github:infraflakes/srn-coreutils -- [args]
+    ```
+    Or the latest development build:
+    ```bash
+    nix run github:infraflakes/srn-coreutils/dev -- [args]
+    ```
 
-    **Stable binary release:**
-    ```bash
-    nix run github:infraflakes/srn-coreutils#stable -- [args]
-    ```
-    **Latest development build:**
-    ```bash
-    nix run github:infraflakes/srn-coreutils#test -- [args]
-    ```
-    (Replace `[args]` with any `serein` command and its arguments, e.g., `nix run github:infraflakes/srn-coreutils -- music convert mp3 /path/to/dir`)
+    (Replace `[args]` with any command and its arguments, e.g., `nix run github:infraflakes/srn-coreutils -- music convert mp3 /path/to/dir`)
 
 ### For NixOS/Home Manager Configurations
 
-If you manage your system or user environment with NixOS or Home Manager flakes, you can add `srn-coreutils` as an input to your configuration:
+If you manage your system or user environment with NixOS or Home Manager flakes, you can add `srn-coreutils` as an input to your configuration.
 
 1.  **Add `srn-coreutils` as an input in your `flake.nix`:**
+
+    You can choose which branch to follow. For the stable version, use the `main` branch. For the latest development version, use the `dev` branch.
 
     ```nix
     {
@@ -47,9 +48,13 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
         home-manager.url = "github:nix-community/home-manager";
         home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-        # Add srn-coreutils flake as an input
-        srn-coreutils.url = "github:infraflakes/srn-coreutils";
-        srn-coreutils.inputs.nixpkgs.follows = "nixpkgs"; # Ensure consistent nixpkgs
+        # Add srn-coreutils flake input, tracking the main (stable) branch
+        srn-coreutils = {
+          url = "github:infraflakes/srn-coreutils";
+          # Or, to track the dev branch:
+          # url = "github:infraflakes/srn-coreutils/dev";
+          inputs.nixpkgs.follows = "nixpkgs";
+        };
       };
 
       outputs = { self, nixpkgs, home-manager, srn-coreutils, ... } @ inputs: {
@@ -58,7 +63,9 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
     }
     ```
 
-2.  **Install `serein` in your NixOS or Home Manager configuration:**
+2.  **Install the CLI in your NixOS or Home Manager configuration:**
+
+    The flake provides a `default` package.
 
     **Option A: Install System-Wide (NixOS Configuration)**
 
@@ -68,9 +75,9 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
 
     {
       environment.systemPackages = with pkgs; [
-        # Reference serein from the srn-coreutils flake input
-        inputs.srn-coreutils.packages.${pkgs.system}.test # bleeding edge
-        inputs.srn-coreutils.packages.${pkgs.system}.stable # follow release
+        # Reference it from the srn-coreutils flake input
+        inputs.srn-coreutils.packages.${pkgs.stdenv.hostPlatform.system}.default
+
       ];
 
       # ... other system configurations
@@ -85,9 +92,9 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
 
     {
       home.packages = [
-        # Reference serein from the srn-coreutils flake input
-        inputs.srn-coreutils.packages.${pkgs.system}.test # bleeding edge
-        inputs.srn-coreutils.packages.${pkgs.system}.default # follow release
+        # Reference it from the srn-coreutils flake input
+        inputs.srn-coreutils.packages.${pkgs.stdenv.hostPlatform.system}.default
+
       ];
 
       # ... other Home Manager options
@@ -96,19 +103,19 @@ If you manage your system or user environment with NixOS or Home Manager flakes,
 
 ### Binary Distribution (For Non-Nix Users)
 
-For users not using Nix, `serein` can be downloaded as a single executable binary.
+For users not using Nix, the CLI can be downloaded as a single executable binary.
 
 1.  **Download the latest release:**
     Visit the [GitHub Releases page](https://github.com/infraflakes/srn-coreutils/releases) and download the wanted binary.
 
 2.  **Make the binary executable:**
     ```bash
-    chmod +x ./serein
+    chmod +x srn
     ```
 
 3.  **Move the binary to your PATH (optional but recommended):**
     ```bash
-    sudo mv ./serein /usr/local/bin/
+    sudo mv srn /usr/local/bin/
     ```
 
 ### Manual Installation (from source)
@@ -128,12 +135,12 @@ If you have a Go environment set up, you can build from source.
     ```
     Alternatively, you can use the standard Go command:
     ```bash
-    go build -o serein .
+    go build -o srn .
     ```
 
 ## Prerequisites and Usage:
 
-Serein acts as a wrapper for several external tools. Using which ultimately depends on your own use case, you can either use --dry-run flag to see the backend tools used, or refer to the [documentation](docs/docs.md):
+You can refer to the [documentation](docs/docs.md):
 
 ## Contributing
 

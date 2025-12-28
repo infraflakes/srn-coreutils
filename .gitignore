@@ -4,5 +4,5 @@ result
 *.nix.d/
 *.log
 conversion_errors.log
-serein
+srn
 .venv/

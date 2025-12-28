@@ -1,6 +1,6 @@
-# bash completion for serein                               -*- shell-script -*-
+# bash completion for srn                               -*- shell-script -*-
 
-__serein_debug()
+__srn_debug()
 {
     if [[ -n ${BASH_COMP_DEBUG_FILE:-} ]]; then
         echo "$*" >> "${BASH_COMP_DEBUG_FILE}"
@@ -9,13 +9,13 @@ __serein_debug()
 
 # Homebrew on Macs have version 1.3 of bash-completion which doesn't include
 # _init_completion. This is a very minimal version of that function.
-__serein_init_completion()
+__srn_init_completion()
 {
     COMPREPLY=()
     _get_comp_words_by_ref "$@" cur prev words cword
 }
 
-__serein_index_of_word()
+__srn_index_of_word()
 {
     local w word=$1
     shift
@@ -27,7 +27,7 @@ __serein_index_of_word()
     index=-1
 }
 
-__serein_contains_word()
+__srn_contains_word()
 {
     local w word=$1; shift
     for w in "$@"; do
@@ -36,9 +36,9 @@ __serein_contains_word()
     return 1
 }
 
-__serein_handle_go_custom_completion()
+__srn_handle_go_custom_completion()
 {
-    __serein_debug "${FUNCNAME[0]}: cur is ${cur}, words[*] is ${words[*]}, #words[@] is ${#words[@]}"
+    __srn_debug "${FUNCNAME[0]}: cur is ${cur}, words[*] is ${words[*]}, #words[@] is ${#words[@]}"
 
     local shellCompDirectiveError=1
     local shellCompDirectiveNoSpace=2
@@ -49,23 +49,23 @@ __serein_handle_go_custom_completion()
     local out requestComp lastParam lastChar comp directive args
 
     # Prepare the command to request completions for the program.
-    # Calling ${words[0]} instead of directly serein allows handling aliases
+    # Calling ${words[0]} instead of directly srn allows handling aliases
     args=("${words[@]:1}")
     # Disable ActiveHelp which is not supported for bash completion v1
-    requestComp="SEREIN_ACTIVE_HELP=0 ${words[0]} __completeNoDesc ${args[*]}"
+    requestComp="srn_ACTIVE_HELP=0 ${words[0]} __completeNoDesc ${args[*]}"
 
     lastParam=${words[$((${#words[@]}-1))]}
     lastChar=${lastParam:$((${#lastParam}-1)):1}
-    __serein_debug "${FUNCNAME[0]}: lastParam ${lastParam}, lastChar ${lastChar}"
+    __srn_debug "${FUNCNAME[0]}: lastParam ${lastParam}, lastChar ${lastChar}"
 
     if [ -z "${cur}" ] && [ "${lastChar}" != "=" ]; then
         # If the last parameter is complete (there is a space following it)
         # We add an extra empty parameter so we can indicate this to the go method.
-        __serein_debug "${FUNCNAME[0]}: Adding extra empty parameter"
+        __srn_debug "${FUNCNAME[0]}: Adding extra empty parameter"
         requestComp="${requestComp} \"\""
     fi
 
-    __serein_debug "${FUNCNAME[0]}: calling ${requestComp}"
+    __srn_debug "${FUNCNAME[0]}: calling ${requestComp}"
     # Use eval to handle any environment variables and such
     out=$(eval "${requestComp}" 2>/dev/null)
 
@@ -77,23 +77,23 @@ __serein_handle_go_custom_completion()
         # There is not directive specified
         directive=0
     fi
-    __serein_debug "${FUNCNAME[0]}: the completion directive is: ${directive}"
-    __serein_debug "${FUNCNAME[0]}: the completions are: ${out}"
+    __srn_debug "${FUNCNAME[0]}: the completion directive is: ${directive}"
+    __srn_debug "${FUNCNAME[0]}: the completions are: ${out}"
 
     if [ $((directive & shellCompDirectiveError)) -ne 0 ]; then
         # Error code.  No completion.
-        __serein_debug "${FUNCNAME[0]}: received error from custom completion go code"
+        __srn_debug "${FUNCNAME[0]}: received error from custom completion go code"
         return
     else
         if [ $((directive & shellCompDirectiveNoSpace)) -ne 0 ]; then
             if [[ $(type -t compopt) = "builtin" ]]; then
-                __serein_debug "${FUNCNAME[0]}: activating no space"
+                __srn_debug "${FUNCNAME[0]}: activating no space"
                 compopt -o nospace
             fi
         fi
         if [ $((directive & shellCompDirectiveNoFileComp)) -ne 0 ]; then
             if [[ $(type -t compopt) = "builtin" ]]; then
-                __serein_debug "${FUNCNAME[0]}: activating no file completion"
+                __srn_debug "${FUNCNAME[0]}: activating no file completion"
                 compopt +o default
             fi
         fi
@@ -109,7 +109,7 @@ __serein_handle_go_custom_completion()
         done
 
         filteringCmd="_filedir $fullFilter"
-        __serein_debug "File filtering command: $filteringCmd"
+        __srn_debug "File filtering command: $filteringCmd"
         $filteringCmd
     elif [ $((directive & shellCompDirectiveFilterDirs)) -ne 0 ]; then
         # File completion for directories only
@@ -117,10 +117,10 @@ __serein_handle_go_custom_completion()
         # Use printf to strip any trailing newline
         subdir=$(printf "%s" "${out}")
         if [ -n "$subdir" ]; then
-            __serein_debug "Listing directories in $subdir"
-            __serein_handle_subdirs_in_dir_flag "$subdir"
+            __srn_debug "Listing directories in $subdir"
+            __srn_handle_subdirs_in_dir_flag "$subdir"
         else
-            __serein_debug "Listing directories in ."
+            __srn_debug "Listing directories in ."
             _filedir -d
         fi
     else
@@ -130,9 +130,9 @@ __serein_handle_go_custom_completion()
     fi
 }
 
-__serein_handle_reply()
+__srn_handle_reply()
 {
-    __serein_debug "${FUNCNAME[0]}"
+    __srn_debug "${FUNCNAME[0]}"
     local comp
     case $cur in
         -*)
@@ -160,7 +160,7 @@ __serein_handle_reply()
 
                 local index flag
                 flag="${cur%=*}"
-                __serein_index_of_word "${flag}" "${flags_with_completion[@]}"
+                __srn_index_of_word "${flag}" "${flags_with_completion[@]}"
                 COMPREPLY=()
                 if [[ ${index} -ge 0 ]]; then
                     PREFIX=""
@@ -184,7 +184,7 @@ __serein_handle_reply()
 
     # check if we are handling a flag with special work handling
     local index
-    __serein_index_of_word "${prev}" "${flags_with_completion[@]}"
+    __srn_index_of_word "${prev}" "${flags_with_completion[@]}"
     if [[ ${index} -ge 0 ]]; then
         ${flags_completion[${index}]}
         return
@@ -201,7 +201,7 @@ __serein_handle_reply()
         completions+=("${must_have_one_noun[@]}")
     elif [[ -n "${has_completion_function}" ]]; then
         # if a go completion function is provided, defer to that function
-        __serein_handle_go_custom_completion
+        __srn_handle_go_custom_completion
     fi
     if [[ ${#must_have_one_flag[@]} -ne 0 ]]; then
         completions+=("${must_have_one_flag[@]}")
@@ -217,9 +217,9 @@ __serein_handle_reply()
     fi
 
     if [[ ${#COMPREPLY[@]} -eq 0 ]]; then
-        if declare -F __serein_custom_func >/dev/null; then
+        if declare -F __srn_custom_func >/dev/null; then
             # try command name qualified custom func
-            __serein_custom_func
+            __srn_custom_func
         else
             # otherwise fall back to unqualified for compatibility
             declare -F __custom_func >/dev/null && __custom_func
@@ -239,21 +239,21 @@ __serein_handle_reply()
 }
 
 # The arguments should be in the form "ext1|ext2|extn"
-__serein_handle_filename_extension_flag()
+__srn_handle_filename_extension_flag()
 {
     local ext="$1"
     _filedir "@(${ext})"
 }
 
-__serein_handle_subdirs_in_dir_flag()
+__srn_handle_subdirs_in_dir_flag()
 {
     local dir="$1"
     pushd "${dir}" >/dev/null 2>&1 && _filedir -d && popd >/dev/null 2>&1 || return
 }
 
-__serein_handle_flag()
+__srn_handle_flag()
 {
-    __serein_debug "${FUNCNAME[0]}: c is $c words[c] is ${words[c]}"
+    __srn_debug "${FUNCNAME[0]}: c is $c words[c] is ${words[c]}"
 
     # if a command required a flag, and we found it, unset must_have_one_flag()
     local flagname=${words[c]}
@@ -264,13 +264,13 @@ __serein_handle_flag()
         flagname=${flagname%=*} # strip everything after the =
         flagname="${flagname}=" # but put the = back
     fi
-    __serein_debug "${FUNCNAME[0]}: looking for ${flagname}"
-    if __serein_contains_word "${flagname}" "${must_have_one_flag[@]}"; then
+    __srn_debug "${FUNCNAME[0]}: looking for ${flagname}"
+    if __srn_contains_word "${flagname}" "${must_have_one_flag[@]}"; then
         must_have_one_flag=()
     fi
 
     # if you set a flag which only applies to this command, don't show subcommands
-    if __serein_contains_word "${flagname}" "${local_nonpersistent_flags[@]}"; then
+    if __srn_contains_word "${flagname}" "${local_nonpersistent_flags[@]}"; then
       commands=()
     fi
 
@@ -287,8 +287,8 @@ __serein_handle_flag()
     fi
 
     # skip the argument to a two word flag
-    if [[ ${words[c]} != *"="* ]] && __serein_contains_word "${words[c]}" "${two_word_flags[@]}"; then
-        __serein_debug "${FUNCNAME[0]}: found a flag ${words[c]}, skip the next argument"
+    if [[ ${words[c]} != *"="* ]] && __srn_contains_word "${words[c]}" "${two_word_flags[@]}"; then
+        __srn_debug "${FUNCNAME[0]}: found a flag ${words[c]}, skip the next argument"
         c=$((c+1))
         # if we are looking for a flags value, don't show commands
         if [[ $c -eq $cword ]]; then
@@ -300,13 +300,13 @@ __serein_handle_flag()
 
 }
 
-__serein_handle_noun()
+__srn_handle_noun()
 {
-    __serein_debug "${FUNCNAME[0]}: c is $c words[c] is ${words[c]}"
+    __srn_debug "${FUNCNAME[0]}: c is $c words[c] is ${words[c]}"
 
-    if __serein_contains_word "${words[c]}" "${must_have_one_noun[@]}"; then
+    if __srn_contains_word "${words[c]}" "${must_have_one_noun[@]}"; then
         must_have_one_noun=()
-    elif __serein_contains_word "${words[c]}" "${noun_aliases[@]}"; then
+    elif __srn_contains_word "${words[c]}" "${noun_aliases[@]}"; then
         must_have_one_noun=()
     fi
 
@@ -314,55 +314,55 @@ __serein_handle_noun()
     c=$((c+1))
 }
 
-__serein_handle_command()
+__srn_handle_command()
 {
-    __serein_debug "${FUNCNAME[0]}: c is $c words[c] is ${words[c]}"
+    __srn_debug "${FUNCNAME[0]}: c is $c words[c] is ${words[c]}"
 
     local next_command
     if [[ -n ${last_command} ]]; then
         next_command="_${last_command}_${words[c]//:/__}"
     else
         if [[ $c -eq 0 ]]; then
-            next_command="_serein_root_command"
+            next_command="_srn_root_command"
         else
             next_command="_${words[c]//:/__}"
         fi
     fi
     c=$((c+1))
-    __serein_debug "${FUNCNAME[0]}: looking for ${next_command}"
+    __srn_debug "${FUNCNAME[0]}: looking for ${next_command}"
     declare -F "$next_command" >/dev/null && $next_command
 }
 
-__serein_handle_word()
+__srn_handle_word()
 {
     if [[ $c -ge $cword ]]; then
-        __serein_handle_reply
+        __srn_handle_reply
         return
     fi
-    __serein_debug "${FUNCNAME[0]}: c is $c words[c] is ${words[c]}"
+    __srn_debug "${FUNCNAME[0]}: c is $c words[c] is ${words[c]}"
     if [[ "${words[c]}" == -* ]]; then
-        __serein_handle_flag
-    elif __serein_contains_word "${words[c]}" "${commands[@]}"; then
-        __serein_handle_command
+        __srn_handle_flag
+    elif __srn_contains_word "${words[c]}" "${commands[@]}"; then
+        __srn_handle_command
     elif [[ $c -eq 0 ]]; then
-        __serein_handle_command
-    elif __serein_contains_word "${words[c]}" "${command_aliases[@]}"; then
+        __srn_handle_command
+    elif __srn_contains_word "${words[c]}" "${command_aliases[@]}"; then
         # aliashash variable is an associative array which is only supported in bash > 3.
         if [[ -z "${BASH_VERSION:-}" || "${BASH_VERSINFO[0]:-}" -gt 3 ]]; then
             words[c]=${aliashash[${words[c]}]}
-            __serein_handle_command
+            __srn_handle_command
         else
-            __serein_handle_noun
+            __srn_handle_noun
         fi
     else
-        __serein_handle_noun
+        __srn_handle_noun
     fi
-    __serein_handle_word
+    __srn_handle_word
 }
 
-_serein_archive_unzip_password()
+_srn_archive_unzip_password()
 {
-    last_command="serein_archive_unzip_password"
+    last_command="srn_archive_unzip_password"
 
     command_aliases=()
 
@@ -381,52 +381,9 @@ _serein_archive_unzip_password()
     noun_aliases=()
 }
 
-_serein_archive_unzip()
+_srn_archive_unzip()
 {
-    last_command="serein_archive_unzip"
-
-    command_aliases=()
-
-    commands=()
-    commands+=("password")
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_archive_zip_password()
-{
-    last_command="serein_archive_zip_password"
-
-    command_aliases=()
-
-    commands=()
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_archive_zip()
-{
-    last_command="serein_archive_zip"
+    last_command="srn_archive_unzip"
 
     command_aliases=()
 
@@ -446,9 +403,52 @@ _serein_archive_zip()
     noun_aliases=()
 }
 
-_serein_archive()
+_srn_archive_zip_password()
 {
-    last_command="serein_archive"
+    last_command="srn_archive_zip_password"
+
+    command_aliases=()
+
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_archive_zip()
+{
+    last_command="srn_archive_zip"
+
+    command_aliases=()
+
+    commands=()
+    commands+=("password")
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_archive()
+{
+    last_command="srn_archive"
 
     command_aliases=()
 
@@ -469,9 +469,9 @@ _serein_archive()
     noun_aliases=()
 }
 
-_serein_completion()
+_srn_completion()
 {
-    last_command="serein_completion"
+    last_command="srn_completion"
 
     command_aliases=()
 
@@ -498,9 +498,9 @@ _serein_completion()
     noun_aliases=()
 }
 
-_serein_container_build()
+_srn_container_build()
 {
-    last_command="serein_container_build"
+    last_command="srn_container_build"
 
     command_aliases=()
 
@@ -519,9 +519,9 @@ _serein_container_build()
     noun_aliases=()
 }
 
-_serein_container_delete()
+_srn_container_delete()
 {
-    last_command="serein_container_delete"
+    last_command="srn_container_delete"
 
     command_aliases=()
 
@@ -540,9 +540,9 @@ _serein_container_delete()
     noun_aliases=()
 }
 
-_serein_container_images_delete()
+_srn_container_images_delete()
 {
-    last_command="serein_container_images_delete"
+    last_command="srn_container_images_delete"
 
     command_aliases=()
 
@@ -561,9 +561,9 @@ _serein_container_images_delete()
     noun_aliases=()
 }
 
-_serein_container_images_list()
+_srn_container_images_list()
 {
-    last_command="serein_container_images_list"
+    last_command="srn_container_images_list"
 
     command_aliases=()
 
@@ -582,9 +582,9 @@ _serein_container_images_list()
     noun_aliases=()
 }
 
-_serein_container_images()
+_srn_container_images()
 {
-    last_command="serein_container_images"
+    last_command="srn_container_images"
 
     command_aliases=()
 
@@ -605,9 +605,9 @@ _serein_container_images()
     noun_aliases=()
 }
 
-_serein_container_ios()
+_srn_container_ios()
 {
-    last_command="serein_container_ios"
+    last_command="srn_container_ios"
 
     command_aliases=()
 
@@ -634,9 +634,9 @@ _serein_container_ios()
     noun_aliases=()
 }
 
-_serein_container_list()
+_srn_container_list()
 {
-    last_command="serein_container_list"
+    last_command="srn_container_list"
 
     command_aliases=()
 
@@ -655,9 +655,9 @@ _serein_container_list()
     noun_aliases=()
 }
 
-_serein_container_shell()
+_srn_container_shell()
 {
-    last_command="serein_container_shell"
+    last_command="srn_container_shell"
 
     command_aliases=()
 
@@ -690,9 +690,9 @@ _serein_container_shell()
     noun_aliases=()
 }
 
-_serein_container_silent()
+_srn_container_silent()
 {
-    last_command="serein_container_silent"
+    last_command="srn_container_silent"
 
     command_aliases=()
 
@@ -721,9 +721,9 @@ _serein_container_silent()
     noun_aliases=()
 }
 
-_serein_container()
+_srn_container()
 {
-    last_command="serein_container"
+    last_command="srn_container"
 
     command_aliases=()
 
@@ -749,9 +749,9 @@ _serein_container()
     noun_aliases=()
 }
 
-_serein_find_dir_delete()
+_srn_find_dir_delete()
 {
-    last_command="serein_find_dir_delete"
+    last_command="srn_find_dir_delete"
 
     command_aliases=()
 
@@ -770,52 +770,9 @@ _serein_find_dir_delete()
     noun_aliases=()
 }
 
-_serein_find_dir()
+_srn_find_dir()
 {
-    last_command="serein_find_dir"
-
-    command_aliases=()
-
-    commands=()
-    commands+=("delete")
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_find_file_delete()
-{
-    last_command="serein_find_file_delete"
-
-    command_aliases=()
-
-    commands=()
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_find_file()
-{
-    last_command="serein_find_file"
+    last_command="srn_find_dir"
 
     command_aliases=()
 
@@ -835,9 +792,9 @@ _serein_find_file()
     noun_aliases=()
 }
 
-_serein_find_word_delete()
+_srn_find_file_delete()
 {
-    last_command="serein_find_word_delete"
+    last_command="srn_find_file_delete"
 
     command_aliases=()
 
@@ -856,9 +813,9 @@ _serein_find_word_delete()
     noun_aliases=()
 }
 
-_serein_find_word()
+_srn_find_file()
 {
-    last_command="serein_find_word"
+    last_command="srn_find_file"
 
     command_aliases=()
 
@@ -878,9 +835,52 @@ _serein_find_word()
     noun_aliases=()
 }
 
-_serein_find()
+_srn_find_word_delete()
 {
-    last_command="serein_find"
+    last_command="srn_find_word_delete"
+
+    command_aliases=()
+
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_find_word()
+{
+    last_command="srn_find_word"
+
+    command_aliases=()
+
+    commands=()
+    commands+=("delete")
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_find()
+{
+    last_command="srn_find"
 
     command_aliases=()
 
@@ -902,9 +902,9 @@ _serein_find()
     noun_aliases=()
 }
 
-_serein_git_branch_create()
+_srn_git_branch_create()
 {
-    last_command="serein_git_branch_create"
+    last_command="srn_git_branch_create"
 
     command_aliases=()
 
@@ -923,9 +923,9 @@ _serein_git_branch_create()
     noun_aliases=()
 }
 
-_serein_git_branch_list()
+_srn_git_branch_list()
 {
-    last_command="serein_git_branch_list"
+    last_command="srn_git_branch_list"
 
     command_aliases=()
 
@@ -944,9 +944,9 @@ _serein_git_branch_list()
     noun_aliases=()
 }
 
-_serein_git_branch_local()
+_srn_git_branch_local()
 {
-    last_command="serein_git_branch_local"
+    last_command="srn_git_branch_local"
 
     command_aliases=()
 
@@ -965,9 +965,9 @@ _serein_git_branch_local()
     noun_aliases=()
 }
 
-_serein_git_branch_remote()
+_srn_git_branch_remote()
 {
-    last_command="serein_git_branch_remote"
+    last_command="srn_git_branch_remote"
 
     command_aliases=()
 
@@ -986,9 +986,9 @@ _serein_git_branch_remote()
     noun_aliases=()
 }
 
-_serein_git_branch_switch()
+_srn_git_branch_switch()
 {
-    last_command="serein_git_branch_switch"
+    last_command="srn_git_branch_switch"
 
     command_aliases=()
 
@@ -1007,9 +1007,9 @@ _serein_git_branch_switch()
     noun_aliases=()
 }
 
-_serein_git_branch()
+_srn_git_branch()
 {
-    last_command="serein_git_branch"
+    last_command="srn_git_branch"
 
     command_aliases=()
 
@@ -1033,9 +1033,9 @@ _serein_git_branch()
     noun_aliases=()
 }
 
-_serein_git_changes()
+_srn_git_changes()
 {
-    last_command="serein_git_changes"
+    last_command="srn_git_changes"
 
     command_aliases=()
 
@@ -1054,9 +1054,9 @@ _serein_git_changes()
     noun_aliases=()
 }
 
-_serein_git_commit_changes()
+_srn_git_commit_changes()
 {
-    last_command="serein_git_commit_changes"
+    last_command="srn_git_commit_changes"
 
     command_aliases=()
 
@@ -1075,9 +1075,9 @@ _serein_git_commit_changes()
     noun_aliases=()
 }
 
-_serein_git_commit_compare()
+_srn_git_commit_compare()
 {
-    last_command="serein_git_commit_compare"
+    last_command="srn_git_commit_compare"
 
     command_aliases=()
 
@@ -1096,9 +1096,9 @@ _serein_git_commit_compare()
     noun_aliases=()
 }
 
-_serein_git_commit_delete()
+_srn_git_commit_delete()
 {
-    last_command="serein_git_commit_delete"
+    last_command="srn_git_commit_delete"
 
     command_aliases=()
 
@@ -1117,9 +1117,9 @@ _serein_git_commit_delete()
     noun_aliases=()
 }
 
-_serein_git_commit_list()
+_srn_git_commit_list()
 {
-    last_command="serein_git_commit_list"
+    last_command="srn_git_commit_list"
 
     command_aliases=()
 
@@ -1138,9 +1138,9 @@ _serein_git_commit_list()
     noun_aliases=()
 }
 
-_serein_git_commit_push()
+_srn_git_commit_push()
 {
-    last_command="serein_git_commit_push"
+    last_command="srn_git_commit_push"
 
     command_aliases=()
 
@@ -1159,9 +1159,9 @@ _serein_git_commit_push()
     noun_aliases=()
 }
 
-_serein_git_commit_undo()
+_srn_git_commit_undo()
 {
-    last_command="serein_git_commit_undo"
+    last_command="srn_git_commit_undo"
 
     command_aliases=()
 
@@ -1180,9 +1180,9 @@ _serein_git_commit_undo()
     noun_aliases=()
 }
 
-_serein_git_commit()
+_srn_git_commit()
 {
-    last_command="serein_git_commit"
+    last_command="srn_git_commit"
 
     command_aliases=()
 
@@ -1207,9 +1207,9 @@ _serein_git_commit()
     noun_aliases=()
 }
 
-_serein_git_remote()
+_srn_git_remote()
 {
-    last_command="serein_git_remote"
+    last_command="srn_git_remote"
 
     command_aliases=()
 
@@ -1228,9 +1228,9 @@ _serein_git_remote()
     noun_aliases=()
 }
 
-_serein_git_stage()
+_srn_git_stage()
 {
-    last_command="serein_git_stage"
+    last_command="srn_git_stage"
 
     command_aliases=()
 
@@ -1249,9 +1249,9 @@ _serein_git_stage()
     noun_aliases=()
 }
 
-_serein_git_status()
+_srn_git_status()
 {
-    last_command="serein_git_status"
+    last_command="srn_git_status"
 
     command_aliases=()
 
@@ -1270,9 +1270,9 @@ _serein_git_status()
     noun_aliases=()
 }
 
-_serein_git_sync()
+_srn_git_sync()
 {
-    last_command="serein_git_sync"
+    last_command="srn_git_sync"
 
     command_aliases=()
 
@@ -1291,9 +1291,9 @@ _serein_git_sync()
     noun_aliases=()
 }
 
-_serein_git_tag_create()
+_srn_git_tag_create()
 {
-    last_command="serein_git_tag_create"
+    last_command="srn_git_tag_create"
 
     command_aliases=()
 
@@ -1312,9 +1312,9 @@ _serein_git_tag_create()
     noun_aliases=()
 }
 
-_serein_git_tag_local()
+_srn_git_tag_local()
 {
-    last_command="serein_git_tag_local"
+    last_command="srn_git_tag_local"
 
     command_aliases=()
 
@@ -1333,9 +1333,9 @@ _serein_git_tag_local()
     noun_aliases=()
 }
 
-_serein_git_tag_remote()
+_srn_git_tag_remote()
 {
-    last_command="serein_git_tag_remote"
+    last_command="srn_git_tag_remote"
 
     command_aliases=()
 
@@ -1354,9 +1354,9 @@ _serein_git_tag_remote()
     noun_aliases=()
 }
 
-_serein_git_tag_wipe()
+_srn_git_tag_wipe()
 {
-    last_command="serein_git_tag_wipe"
+    last_command="srn_git_tag_wipe"
 
     command_aliases=()
 
@@ -1375,9 +1375,9 @@ _serein_git_tag_wipe()
     noun_aliases=()
 }
 
-_serein_git_tag()
+_srn_git_tag()
 {
-    last_command="serein_git_tag"
+    last_command="srn_git_tag"
 
     command_aliases=()
 
@@ -1400,9 +1400,9 @@ _serein_git_tag()
     noun_aliases=()
 }
 
-_serein_git_undo()
+_srn_git_undo()
 {
-    last_command="serein_git_undo"
+    last_command="srn_git_undo"
 
     command_aliases=()
 
@@ -1421,9 +1421,9 @@ _serein_git_undo()
     noun_aliases=()
 }
 
-_serein_git_unstage()
+_srn_git_unstage()
 {
-    last_command="serein_git_unstage"
+    last_command="srn_git_unstage"
 
     command_aliases=()
 
@@ -1442,9 +1442,9 @@ _serein_git_unstage()
     noun_aliases=()
 }
 
-_serein_git()
+_srn_git()
 {
-    last_command="serein_git"
+    last_command="srn_git"
 
     command_aliases=()
 
@@ -1473,9 +1473,9 @@ _serein_git()
     noun_aliases=()
 }
 
-_serein_help()
+_srn_help()
 {
-    last_command="serein_help"
+    last_command="srn_help"
 
     command_aliases=()
 
@@ -1495,9 +1495,9 @@ _serein_help()
     noun_aliases=()
 }
 
-_serein_music_convert_mp3()
+_srn_music_convert_mp3()
 {
-    last_command="serein_music_convert_mp3"
+    last_command="srn_music_convert_mp3"
 
     command_aliases=()
 
@@ -1516,9 +1516,9 @@ _serein_music_convert_mp3()
     noun_aliases=()
 }
 
-_serein_music_convert_playlist()
+_srn_music_convert_playlist()
 {
-    last_command="serein_music_convert_playlist"
+    last_command="srn_music_convert_playlist"
 
     command_aliases=()
 
@@ -1537,9 +1537,9 @@ _serein_music_convert_playlist()
     noun_aliases=()
 }
 
-_serein_music_convert()
+_srn_music_convert()
 {
-    last_command="serein_music_convert"
+    last_command="srn_music_convert"
 
     command_aliases=()
 
@@ -1560,9 +1560,9 @@ _serein_music_convert()
     noun_aliases=()
 }
 
-_serein_music_download()
+_srn_music_download()
 {
-    last_command="serein_music_download"
+    last_command="srn_music_download"
 
     command_aliases=()
 
@@ -1581,9 +1581,9 @@ _serein_music_download()
     noun_aliases=()
 }
 
-_serein_music()
+_srn_music()
 {
-    last_command="serein_music"
+    last_command="srn_music"
 
     command_aliases=()
 
@@ -1604,9 +1604,9 @@ _serein_music()
     noun_aliases=()
 }
 
-_serein_nix_clean()
+_srn_nix_clean()
 {
-    last_command="serein_nix_clean"
+    last_command="srn_nix_clean"
 
     command_aliases=()
 
@@ -1625,9 +1625,9 @@ _serein_nix_clean()
     noun_aliases=()
 }
 
-_serein_nix_home_build()
+_srn_nix_home_build()
 {
-    last_command="serein_nix_home_build"
+    last_command="srn_nix_home_build"
 
     command_aliases=()
 
@@ -1646,9 +1646,9 @@ _serein_nix_home_build()
     noun_aliases=()
 }
 
-_serein_nix_home_delete()
+_srn_nix_home_delete()
 {
-    last_command="serein_nix_home_delete"
+    last_command="srn_nix_home_delete"
 
     command_aliases=()
 
@@ -1667,9 +1667,9 @@ _serein_nix_home_delete()
     noun_aliases=()
 }
 
-_serein_nix_home_gen()
+_srn_nix_home_gen()
 {
-    last_command="serein_nix_home_gen"
+    last_command="srn_nix_home_gen"
 
     command_aliases=()
 
@@ -1688,138 +1688,9 @@ _serein_nix_home_gen()
     noun_aliases=()
 }
 
-_serein_nix_home()
+_srn_nix_home()
 {
-    last_command="serein_nix_home"
-
-    command_aliases=()
-
-    commands=()
-    commands+=("build")
-    commands+=("delete")
-    commands+=("gen")
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_nix_lint()
-{
-    last_command="serein_nix_lint"
-
-    command_aliases=()
-
-    commands=()
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_nix_search()
-{
-    last_command="serein_nix_search"
-
-    command_aliases=()
-
-    commands=()
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_nix_sys_build()
-{
-    last_command="serein_nix_sys_build"
-
-    command_aliases=()
-
-    commands=()
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_nix_sys_delete()
-{
-    last_command="serein_nix_sys_delete"
-
-    command_aliases=()
-
-    commands=()
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_nix_sys_gen()
-{
-    last_command="serein_nix_sys_gen"
-
-    command_aliases=()
-
-    commands=()
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--dry-run")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_serein_nix_sys()
-{
-    last_command="serein_nix_sys"
+    last_command="srn_nix_home"
 
     command_aliases=()
 
@@ -1841,9 +1712,9 @@ _serein_nix_sys()
     noun_aliases=()
 }
 
-_serein_nix_update()
+_srn_nix_lint()
 {
-    last_command="serein_nix_update"
+    last_command="srn_nix_lint"
 
     command_aliases=()
 
@@ -1862,9 +1733,138 @@ _serein_nix_update()
     noun_aliases=()
 }
 
-_serein_nix()
+_srn_nix_search()
 {
-    last_command="serein_nix"
+    last_command="srn_nix_search"
+
+    command_aliases=()
+
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_nix_sys_build()
+{
+    last_command="srn_nix_sys_build"
+
+    command_aliases=()
+
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_nix_sys_delete()
+{
+    last_command="srn_nix_sys_delete"
+
+    command_aliases=()
+
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_nix_sys_gen()
+{
+    last_command="srn_nix_sys_gen"
+
+    command_aliases=()
+
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_nix_sys()
+{
+    last_command="srn_nix_sys"
+
+    command_aliases=()
+
+    commands=()
+    commands+=("build")
+    commands+=("delete")
+    commands+=("gen")
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_nix_update()
+{
+    last_command="srn_nix_update"
+
+    command_aliases=()
+
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_srn_nix()
+{
+    last_command="srn_nix"
 
     command_aliases=()
 
@@ -1889,9 +1889,9 @@ _serein_nix()
     noun_aliases=()
 }
 
-_serein_todo()
+_srn_todo()
 {
-    last_command="serein_todo"
+    last_command="srn_todo"
 
     command_aliases=()
 
@@ -1910,9 +1910,9 @@ _serein_todo()
     noun_aliases=()
 }
 
-_serein_root_command()
+_srn_root_command()
 {
-    last_command="serein"
+    last_command="srn"
 
     command_aliases=()
 
@@ -1940,7 +1940,7 @@ _serein_root_command()
     noun_aliases=()
 }
 
-__start_serein()
+__start_srn()
 {
     local cur prev words cword split
     declare -A flaghash 2>/dev/null || :
@@ -1948,7 +1948,7 @@ __start_serein()
     if declare -F _init_completion >/dev/null 2>&1; then
         _init_completion -s || return
     else
-        __serein_init_completion -n "=" || return
+        __srn_init_completion -n "=" || return
     fi
 
     local c=0
@@ -1958,7 +1958,7 @@ __start_serein()
     local local_nonpersistent_flags=()
     local flags_with_completion=()
     local flags_completion=()
-    local commands=("serein")
+    local commands=("srn")
     local command_aliases=()
     local must_have_one_flag=()
     local must_have_one_noun=()
@@ -1967,13 +1967,13 @@ __start_serein()
     local nouns=()
     local noun_aliases=()
 
-    __serein_handle_word
+    __srn_handle_word
 }
 
 if [[ $(type -t compopt) = "builtin" ]]; then
-    complete -o default -F __start_serein serein
+    complete -o default -F __start_srn srn
 else
-    complete -o default -o nospace -F __start_serein serein
+    complete -o default -o nospace -F __start_srn srn
 fi
 
 # ex: ts=4 sw=4 et filetype=sh

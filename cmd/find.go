@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"serein/internal/find"
+	"srn/internal/find"
 )
 
 var findCmd = &cobra.Command{

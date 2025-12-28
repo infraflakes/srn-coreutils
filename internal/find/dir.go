@@ -2,7 +2,7 @@ package find
 
 import (
 	"github.com/spf13/cobra"
-	"serein/internal/shared"
+	"srn/internal/shared"
 )
 
 var DirCmd = shared.NewCommand(
