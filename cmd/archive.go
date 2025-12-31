@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"srn/internal/archive"
+	"github.com/infraflakes/srn-coreutils/internal/archive"
 )
 
 func init() {

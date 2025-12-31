@@ -2,14 +2,14 @@ package archive
 
 import (
 	"github.com/spf13/cobra"
-	"srn/internal/shared"
+	"github.com/infraflakes/srn-libs/cli"
 )
 
 func init() {
 	UnzipCmd.AddCommand(unzipPasswordCmd)
 }
 
-var UnzipCmd = shared.NewCommand(
+var UnzipCmd = cli.NewCommand(
 	"unzip [target-to-unarchive]",
 	"Extract archives with 7z",
 	cobra.ExactArgs(1),
@@ -18,7 +18,7 @@ var UnzipCmd = shared.NewCommand(
 	},
 )
 
-var unzipPasswordCmd = shared.NewCommand(
+var unzipPasswordCmd = cli.NewCommand(
 	"password [password] [target-to-unarchive]",
 	"Extract archives with a password",
 	cobra.ExactArgs(2),

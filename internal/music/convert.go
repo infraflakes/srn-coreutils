@@ -8,7 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"srn/internal/shared"
+	"github.com/infraflakes/srn-libs/cli"
+	"github.com/infraflakes/srn-libs/exec"
+	"github.com/infraflakes/srn-libs/fs"
 )
 
 func init() {
@@ -16,7 +18,7 @@ func init() {
 	ConvertCmd.AddCommand(convertPlaylistCmd)
 }
 
-var ConvertCmd = shared.NewCommand(
+var ConvertCmd = cli.NewCommand(
 	"convert",
 	"Music related conversion utilities",
 	cobra.NoArgs,
@@ -25,18 +27,18 @@ var ConvertCmd = shared.NewCommand(
 	},
 )
 
-var convertMp3NewCmd = shared.NewCommand(
+var convertMp3NewCmd = cli.NewCommand(
 	"mp3 [directories...]",
 	"Convert opus/flac to mp3 in one or more directories",
 	cobra.MinimumNArgs(1),
 	func(cmd *cobra.Command, args []string) {
 		// Create a single log file in the current directory for all operations
 		logPath := "conversion_errors.log"
-		logFile, err := shared.CreateFile(logPath)
+		logFile, err := fs.CreateFile(logPath)
 		if err != nil {
 			os.Exit(1)
 		}
-		defer shared.CloseFile(logFile)
+		defer fs.CloseFile(logFile)
 
 		for _, dir := range args {
 			fmt.Printf("--- Processing directory: %s ---", dir)
@@ -54,7 +56,7 @@ var convertMp3NewCmd = shared.NewCommand(
 					}
 
 					fmt.Println("Converting + embedding cover:", path, "→", out)
-					stderr, convErr := shared.ExecuteCommandWithStderr(
+					stderr, convErr := exec.ExecuteCommandWithStderr(
 						"ffmpeg",
 						"-nostdin",
 						"-i", path,
@@ -69,7 +71,7 @@ var convertMp3NewCmd = shared.NewCommand(
 					)
 
 					if convErr != nil {
-						shared.LogError(logFile, fmt.Sprintf(
+						fs.LogError(logFile, fmt.Sprintf(
 							"Conversion error for %s: %v\nFFmpeg Output:\n%s\n",
 							path, convErr, stderr,
 						))
@@ -85,7 +87,7 @@ var convertMp3NewCmd = shared.NewCommand(
 						fmt.Println("Deleting source:", path)
 						_ = os.Remove(path)
 					} else {
-						shared.LogError(logFile, fmt.Sprintf(
+						fs.LogError(logFile, fmt.Sprintf(
 							"Conversion failed (zero-size or missing output): %s\n", path,
 						))
 						fmt.Printf("Conversion failed (zero-size or missing output): %s\n", path)
@@ -99,14 +101,14 @@ var convertMp3NewCmd = shared.NewCommand(
 	},
 )
 
-var convertPlaylistCmd = shared.NewCommand(
+var convertPlaylistCmd = cli.NewCommand(
 	"playlist [paths/to/.m3u...]",
 	"Format one or more playlists",
 	cobra.MinimumNArgs(1),
 	func(cmd *cobra.Command, args []string) {
 		for _, playlist := range args {
 			fmt.Printf("--- Formatting playlist: %s ---", playlist)
-			f, err := shared.OpenFile(playlist)
+			f, err := fs.OpenFile(playlist)
 			if err != nil {
 				fmt.Printf("Skipping %s: %v\n", playlist, err)
 				continue
@@ -117,7 +119,7 @@ var convertPlaylistCmd = shared.NewCommand(
 			for scanner.Scan() {
 				lines = append(lines, scanner.Text())
 			}
-			shared.CloseFile(f) // Close file after reading
+			fs.CloseFile(f) // Close file after reading
 
 			formatted := FormatPlaylistLines(lines)
 			output := strings.Join(formatted, "\n")

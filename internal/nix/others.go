@@ -2,7 +2,7 @@ package nix
 
 import (
 	"github.com/spf13/cobra"
-	"srn/internal/shared"
+	"github.com/infraflakes/srn-libs/cli"
 )
 
 func BasicNixCmds(parent *cobra.Command) {
@@ -13,7 +13,7 @@ func BasicNixCmds(parent *cobra.Command) {
 	parent.AddCommand(nixLintCmd)
 }
 
-var nixHashCmd = shared.NewCommand(
+var nixHashCmd = cli.NewCommand(
 	"hash",
 	"Prefetch a Nix package URL and convert its hash to base64",
 	cobra.ExactArgs(1),
@@ -24,7 +24,7 @@ var nixHashCmd = shared.NewCommand(
 	},
 )
 
-var nixSearchCmd = shared.NewCommand(
+var nixSearchCmd = cli.NewCommand(
 	"search",
 	"Search for nix packages",
 	cobra.ExactArgs(1),
@@ -34,7 +34,7 @@ var nixSearchCmd = shared.NewCommand(
 	},
 )
 
-var nixUpdateCmd = shared.NewCommand(
+var nixUpdateCmd = cli.NewCommand(
 	"update",
 	"Update flakes",
 	cobra.NoArgs,
@@ -43,7 +43,7 @@ var nixUpdateCmd = shared.NewCommand(
 	},
 )
 
-var nixCleanCmd = shared.NewCommand(
+var nixCleanCmd = cli.NewCommand(
 	"clean",
 	"Clean up Nix store",
 	cobra.NoArgs,
@@ -52,7 +52,7 @@ var nixCleanCmd = shared.NewCommand(
 	},
 )
 
-var nixLintCmd = shared.NewCommand(
+var nixLintCmd = cli.NewCommand(
 	"lint",
 	"Linter For Nix",
 	cobra.NoArgs,

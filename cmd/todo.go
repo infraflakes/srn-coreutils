@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 
-	"srn/internal/todo"
+	"github.com/infraflakes/srn-coreutils/internal/todo"
 )
 
 var todoCmd = &cobra.Command{

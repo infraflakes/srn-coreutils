@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"srn/cmd"
+
+	"github.com/infraflakes/srn-coreutils/cmd"
 )
 
 var version = "dev"

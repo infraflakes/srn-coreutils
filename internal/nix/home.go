@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"srn/internal/shared"
+	"github.com/infraflakes/srn-libs/cli"
 )
 
 func init() {
@@ -14,7 +14,7 @@ func init() {
 	HomeCmd.AddCommand(HomeGenDeleteCmd)
 }
 
-var HomeCmd = shared.NewCommand(
+var HomeCmd = cli.NewCommand(
 	"home",
 	"Manage home-manager",
 	cobra.NoArgs,
@@ -23,7 +23,7 @@ var HomeCmd = shared.NewCommand(
 	},
 )
 
-var HomeBuildCmd = shared.NewCommand(
+var HomeBuildCmd = cli.NewCommand(
 	"build [path/to/flake]",
 	"Build a home-manager configuration",
 	cobra.ExactArgs(1),
@@ -33,7 +33,7 @@ var HomeBuildCmd = shared.NewCommand(
 	},
 )
 
-var HomeGenCmd = shared.NewCommand(
+var HomeGenCmd = cli.NewCommand(
 	"gen",
 	"List home-manager generations",
 	cobra.NoArgs,
@@ -42,7 +42,7 @@ var HomeGenCmd = shared.NewCommand(
 	},
 )
 
-var HomeGenDeleteCmd = shared.NewCommand(
+var HomeGenDeleteCmd = cli.NewCommand(
 	"delete [numbers...]",
 	"Delete home-manager generations",
 	cobra.MinimumNArgs(1),
