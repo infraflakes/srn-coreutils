@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"srn/internal/music"
+	"github.com/infraflakes/srn-coreutils/internal/music"
 )
 
 var musicCmd = &cobra.Command{

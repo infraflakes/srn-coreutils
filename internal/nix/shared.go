@@ -5,11 +5,12 @@ import (
 	"strconv"
 	"strings"
 
-	"srn/internal/shared"
+	"github.com/infraflakes/srn-libs/exec"
+	"github.com/infraflakes/srn-libs/utils"
 )
 
 func runNixCommand(command string, args ...string) {
-	shared.CheckErr(shared.ExecuteCommand(command, args...))
+	utils.CheckErr(exec.ExecuteCommand(command, args...))
 }
 
 // parseGenerations takes a slice of strings, which can contain numbers or ranges (e.g., "1-5"),

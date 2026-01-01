@@ -8,7 +8,6 @@ Serein is an opinionated CLI that rejects cryptic flags with self-explanatory, E
 *   **Nix System Management:** Manage NixOS system and Home Manager configurations, including building, listing, and deleting generations, and updating flakes.
 *   **Archive Operations:** Compress and extract files using 7z, with support for password protection.
 *   **YouTube Audio Download:** Download audio from YouTube URLs using `yt-dlp` with embedded thumbnails and metadata.
-*   **Git Helper:** A collection of aliases for common Git commands.
 *   **File and Directory Search:** Search for words within files, or locate files and directories by name, with optional deletion of matched items.
 *   **Todo Management:** An interactive terminal-based application for managing todo lists with contexts, priorities, and more.
 

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"srn/internal/shared"
+	"github.com/infraflakes/srn-libs/exec"
 )
 
 var rootCmd = &cobra.Command{
@@ -25,5 +25,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVar(&shared.DryRun, "dry-run", false, "print the command that would be executed instead of executing it")
+	rootCmd.PersistentFlags().BoolVar(&exec.DryRun, "dry-run", false, "print the command that would be executed instead of executing it")
 }

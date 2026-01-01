@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"srn/internal/shared"
+	"github.com/infraflakes/srn-libs/cli"
 )
 
 func init() {
@@ -14,7 +14,7 @@ func init() {
 	SysCmd.AddCommand(SysGenDeleteCmd)
 }
 
-var SysCmd = shared.NewCommand(
+var SysCmd = cli.NewCommand(
 	"sys",
 	"Manage NixOS system",
 	cobra.NoArgs,
@@ -23,7 +23,7 @@ var SysCmd = shared.NewCommand(
 	},
 )
 
-var SysBuildCmd = shared.NewCommand(
+var SysBuildCmd = cli.NewCommand(
 	"build [path/to/flake]",
 	"Build a NixOS system",
 	cobra.ExactArgs(1),
@@ -33,7 +33,7 @@ var SysBuildCmd = shared.NewCommand(
 	},
 )
 
-var SysGenCmd = shared.NewCommand(
+var SysGenCmd = cli.NewCommand(
 	"gen",
 	"List system generations",
 	cobra.NoArgs,
@@ -42,7 +42,7 @@ var SysGenCmd = shared.NewCommand(
 	},
 )
 
-var SysGenDeleteCmd = shared.NewCommand(
+var SysGenDeleteCmd = cli.NewCommand(
 	"delete [numbers...]",
 	"Delete system generations",
 	cobra.MinimumNArgs(1),

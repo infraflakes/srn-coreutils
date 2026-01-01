@@ -3,7 +3,8 @@ package archive
 import (
 	"os"
 	"path/filepath"
-	"srn/internal/shared"
+	"github.com/infraflakes/srn-libs/exec"
+	"github.com/infraflakes/srn-libs/utils"
 )
 
 func ExpandTargets(targets []string) []string {
@@ -31,7 +32,7 @@ func BuildArchiveCommand(archiveName string, targets []string, password string) 
 	cmdArgs = append(cmdArgs, archiveName)
 	cmdArgs = append(cmdArgs, targets...)
 
-	shared.CheckErr(shared.ExecuteCommand("7z", cmdArgs...))
+	utils.CheckErr(exec.ExecuteCommand("7z", cmdArgs...))
 }
 
 func BuildExtractCommand(target string, password string) {
@@ -40,5 +41,5 @@ func BuildExtractCommand(target string, password string) {
 		cmdArgs = append(cmdArgs, "-p"+password)
 	}
 	cmdArgs = append(cmdArgs, target)
-	shared.CheckErr(shared.ExecuteCommand("7z", cmdArgs...))
+	utils.CheckErr(exec.ExecuteCommand("7z", cmdArgs...))
 }
