@@ -29,8 +29,12 @@ github.com/infraflakes/srn-find v0.0.2 h1:q1XrpMl4wMTHIg6ugL0cA2K1pcigBUNktkDo5c
 github.com/infraflakes/srn-find v0.0.2/go.mod h1:RFwgxdb/l3W8GC61tmjXLRpXHJP2CvuH5OVS6dXr6eo=
 github.com/infraflakes/srn-libs v0.0.0-20251231164853-2835c0c670b4 h1:YoQKn2xVb3yDjvx3juSi0cdZKDWKMW/E1dU8H/fnif8=
 github.com/infraflakes/srn-libs v0.0.0-20251231164853-2835c0c670b4/go.mod h1:5AXfvQsuQg9wX40E4ceyVfKdV8p+j//NVchfOPSFAt0=
+github.com/infraflakes/srn-music v0.0.2 h1:RypjFNDMlAjqt7bN0/ZPj9kXQXW3WDp2+so3603W+mA=
+github.com/infraflakes/srn-music v0.0.2/go.mod h1:Rv3SDk/9IZ6OoPQEKTICGYlh0UqltnhoPTFzKSOVVsY=
 github.com/infraflakes/srn-todo v0.0.2 h1:CcGgbHlcSoxf6JefSd1udnA+gCx0wRDLyrL5diTDYCg=
 github.com/infraflakes/srn-todo v0.0.2/go.mod h1:wYwF3DDGkqLpajn5N9AkGUEYzDMIMhA6lHZy+plaP20=
+github.com/infraflakes/srn-zip v0.0.2 h1:RFnyAVj+NZT2tQeWMQuFhswbQiIeUEfDEaXtxmDygQc=
+github.com/infraflakes/srn-zip v0.0.2/go.mod h1:bDOrBfVMWCnWu48YbwMTIk06g2HDDrr7JBVuxmBNONc=
 github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
 github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=

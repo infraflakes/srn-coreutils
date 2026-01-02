@@ -23,13 +23,16 @@
           pkgs.buildGoModule {
             pname = "srn";
             inherit version src;
-            vendorHash = "sha256-+gNaABMs7XZbOFlvLQA5KtnZrBHDWgBtH6W29KMeBU0="; # Update if source changes
+            vendorHash = "sha256-nN+Wzt45H4+CxiHMCDLbqBE8RF8fbefoMe0ooVqPXTk="; # Update if source changes
             ldflags = [
               "-s"
               "-w"
               "-X main.version=${version}"
             ];
             nativeBuildInputs = [pkgs.installShellFiles];
+            postInstall = ''
+              mv $out/bin/srn-coreutils $out/bin/srn
+            '';
             postFixup = ''
               installShellCompletion --fish ${src}/completions/srn.fish
               installShellCompletion --zsh ${src}/completions/srn.zsh
@@ -50,6 +53,7 @@
             go
             golangci-lint
             cmake
+            goreleaser
           ];
         };
 

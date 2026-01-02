@@ -1,21 +1,15 @@
-name: Release
+name: CI
 
 on:
   push:
-    tags:
-      - 'v*'
-
-permissions:
-  contents: write
+  pull_request:
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install Nix
         uses: cachix/install-nix-action@v27
@@ -25,7 +19,14 @@ jobs:
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
             experimental-features = nix-command flakes
 
-      - name: Run GoReleaser
-        run: nix develop --command goreleaser release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Format Go code
+        run: nix develop --command go fmt ./...
+
+      - name: Run golangci-lint
+        run: nix develop --command golangci-lint run ./...
+
+      - name: Flake health check
+        run: nix flake check
+
+      - name: Building Nix Package
+        run: nix build .#default

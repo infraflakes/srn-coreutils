@@ -1,27 +1,22 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
-	"github.com/spf13/cobra"
 	"github.com/infraflakes/srn-libs/exec"
+	"github.com/infraflakes/srn-libs/utils"
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "srn",
-	Short: "Serein Coreutils is an opinionated CLI tool.",
-	Long:  `Serein Coreutils is an opinionated CLI tool that provides aliases for multiple utilities.`,
+	Short: "Serein Coreutils is a suite for your cli.",
+	Long:  `Serein Coreutils is a suite that supercharge your cli workflow.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// Root command does nothing by itself
+		utils.CheckErr(cmd.Help())
 	},
 }
 
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	utils.CheckErr(rootCmd.Execute())
 }
 
 func init() {

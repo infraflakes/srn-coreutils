@@ -1,18 +1,10 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/infraflakes/srn-coreutils/internal/music"
+	music "github.com/infraflakes/srn-music/cmd"
 )
 
-var musicCmd = &cobra.Command{
-	Use:   "music",
-	Short: "Music related utilities",
-	Long:  `Music related utilities.`,
-}
-
 func init() {
-	rootCmd.AddCommand(musicCmd)
-	musicCmd.AddCommand(music.YTMusicDownloadCmd)
-	musicCmd.AddCommand(music.ConvertCmd)
+	music.RootCmd.Use = "music"
+	rootCmd.AddCommand(music.RootCmd)
 }

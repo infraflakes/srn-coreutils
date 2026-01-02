@@ -1,4 +1,4 @@
-# fish completion for srn                               -*- shell-script -*-
+# fish completion for srn                                  -*- shell-script -*-
 
 function __srn_debug
     set -l file "$BASH_COMP_DEBUG_FILE"
@@ -19,7 +19,7 @@ function __srn_perform_completion
     __srn_debug "last arg: $lastArg"
 
     # Disable ActiveHelp which is not supported for fish shell
-    set -l requestComp "srn_ACTIVE_HELP=0 $args[1] __complete $args[2..-1] $lastArg"
+    set -l requestComp "SRN_ACTIVE_HELP=0 $args[1] __complete $args[2..-1] $lastArg"
 
     __srn_debug "Calling $requestComp"
     set -l results (eval $requestComp 2> /dev/null)

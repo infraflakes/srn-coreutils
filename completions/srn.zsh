@@ -1,7 +1,7 @@
 #compdef srn
 compdef _srn srn
 
-# zsh completion for srn                               -*- shell-script -*-
+# zsh completion for srn                                  -*- shell-script -*-
 
 __srn_debug()
 {
