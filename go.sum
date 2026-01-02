@@ -25,8 +25,10 @@ github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f h1:Y/CXytFA4m6
 github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f/go.mod h1:vw97MGsxSvLiUE2X8qFplwetxpGLQrlU1Q9AUEIzCaM=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
-github.com/infraflakes/srn-find v0.0.2 h1:q1XrpMl4wMTHIg6ugL0cA2K1pcigBUNktkDo5c+zmUA=
-github.com/infraflakes/srn-find v0.0.2/go.mod h1:RFwgxdb/l3W8GC61tmjXLRpXHJP2CvuH5OVS6dXr6eo=
+github.com/infraflakes/srn-cd v0.6.3 h1:kpjobY6J7NjN7wKJs1LClSAbpiyR9uYEN9UpisAdqBA=
+github.com/infraflakes/srn-cd v0.6.3/go.mod h1:SPaJm9x1Ecr51gyvv24/cBMKLIRT42prqO1SqKJqAo4=
+github.com/infraflakes/srn-find v0.0.3 h1:vIpSW+HTkge0WtGW9mQh7dAD3ayRnZ5iTZizkLEp9RI=
+github.com/infraflakes/srn-find v0.0.3/go.mod h1:RFwgxdb/l3W8GC61tmjXLRpXHJP2CvuH5OVS6dXr6eo=
 github.com/infraflakes/srn-libs v0.0.0-20251231164853-2835c0c670b4 h1:YoQKn2xVb3yDjvx3juSi0cdZKDWKMW/E1dU8H/fnif8=
 github.com/infraflakes/srn-libs v0.0.0-20251231164853-2835c0c670b4/go.mod h1:5AXfvQsuQg9wX40E4ceyVfKdV8p+j//NVchfOPSFAt0=
 github.com/infraflakes/srn-music v0.0.2 h1:RypjFNDMlAjqt7bN0/ZPj9kXQXW3WDp2+so3603W+mA=

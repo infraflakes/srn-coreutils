@@ -1,6 +1,6 @@
 # Serein Coreutils
 
-Serein is an opinionated CLI that rejects cryptic flags with self-explanatory, English-like sub-commands.
+Serein is an opinionated CLI suite to streamline many command line work.
 
 ## Features
 
@@ -124,6 +124,26 @@ If you have a Go environment set up, you can build from source.
     Alternatively, you can use the standard Go command:
     ```bash
     go build -o srn .
+    ```
+
+#### Caution!
+
+**In order for `srn cd` to work we need to generate shell functions for the cli to work:**
+    Add these to your shell config:
+
+    Bash:
+    ```
+    eval "$(srn cd init bash)"
+    ```
+
+    Zsh:
+    ```
+    eval "$(srn cd init zsh)"
+    ```
+
+    Fish:
+    ```
+    srn cd init fish | source
     ```
 
 ## Contributing

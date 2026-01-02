@@ -2,7 +2,7 @@
 
 # ---- Build Stage ----
 # This stage compiles the Go binary.
-FROM golang:1.22-alpine AS build
+FROM golang:1.25.4-alpine AS build
 
 # Install build dependencies
 RUN apk add --no-cache git

@@ -1,5 +1,5 @@
 {
-  description = "An opinionated CLI wrapper that replaces cryptic flags with self-explanatory, English-like sub-commands.";
+  description = "Serein is an opinionated CLI suite to streamline many command line work.";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -23,7 +23,10 @@
           pkgs.buildGoModule {
             pname = "srn";
             inherit version src;
-            vendorHash = "sha256-nN+Wzt45H4+CxiHMCDLbqBE8RF8fbefoMe0ooVqPXTk="; # Update if source changes
+            preBuild = ''
+              export CGO_ENABLED=0
+            '';
+            vendorHash = "sha256-rOxGSxxs8R3355AyQG6+hsbtKOw33tmswSSVyzy9JA8="; # Update if source changes
             ldflags = [
               "-s"
               "-w"

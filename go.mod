@@ -1,9 +1,10 @@
 module github.com/infraflakes/srn-coreutils
 
-go 1.25.4
+go 1.25.5
 
 require (
-	github.com/infraflakes/srn-find v0.0.2
+	github.com/infraflakes/srn-cd v0.6.3
+	github.com/infraflakes/srn-find v0.0.3
 	github.com/infraflakes/srn-libs v0.0.0-20251231164853-2835c0c670b4
 	github.com/infraflakes/srn-music v0.0.2
 	github.com/infraflakes/srn-todo v0.0.2
