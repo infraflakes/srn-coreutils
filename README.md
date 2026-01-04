@@ -9,6 +9,7 @@ Serein is an opinionated CLI suite to streamline many command line work.
 *   **YouTube Audio Download:** Download audio from YouTube URLs using `yt-dlp` with embedded thumbnails and metadata.
 *   **File and Directory Search:** Search for words within files, or locate files and directories by name, with optional deletion of matched items.
 *   **Todo Management:** An interactive terminal-based application for managing todo lists with contexts, priorities, and more.
+*   **Serein CD:** GNU Change Directory wrapper but with TUI and aliases.
 
 ## Installation
 

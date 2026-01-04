@@ -26,7 +26,7 @@
             preBuild = ''
               export CGO_ENABLED=0
             '';
-            vendorHash = "sha256-rOxGSxxs8R3355AyQG6+hsbtKOw33tmswSSVyzy9JA8="; # Update if source changes
+            vendorHash = "sha256-gJhMKUmy/wwlQ9uiiab74hdl5O5w5B/O3k6RuQMPDbo=";
             ldflags = [
               "-s"
               "-w"
