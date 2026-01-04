@@ -27,6 +27,8 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/infraflakes/srn-cd v0.6.3 h1:kpjobY6J7NjN7wKJs1LClSAbpiyR9uYEN9UpisAdqBA=
 github.com/infraflakes/srn-cd v0.6.3/go.mod h1:SPaJm9x1Ecr51gyvv24/cBMKLIRT42prqO1SqKJqAo4=
+github.com/infraflakes/srn-cd v0.7.1 h1:hxAtKHEXYlI6FNPITEyX8tM0etGev+proGWkZjwd/+c=
+github.com/infraflakes/srn-cd v0.7.1/go.mod h1:SPaJm9x1Ecr51gyvv24/cBMKLIRT42prqO1SqKJqAo4=
 github.com/infraflakes/srn-find v0.0.3 h1:vIpSW+HTkge0WtGW9mQh7dAD3ayRnZ5iTZizkLEp9RI=
 github.com/infraflakes/srn-find v0.0.3/go.mod h1:RFwgxdb/l3W8GC61tmjXLRpXHJP2CvuH5OVS6dXr6eo=
 github.com/infraflakes/srn-libs v0.0.0-20251231164853-2835c0c670b4 h1:YoQKn2xVb3yDjvx3juSi0cdZKDWKMW/E1dU8H/fnif8=
