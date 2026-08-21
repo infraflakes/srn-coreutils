@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
+set -e
 REPO="infraflakes/sutils"
 BINARY_NAME="sn"
 INSTALL_DIR="$HOME/.local/bin"
